@@ -1,1 +1,6 @@
-export const constantRoute = []
+export const constantRoute = [
+  {
+    path: '/login',
+    component: () => import('@/views/login/index.vue')
+  }
+]

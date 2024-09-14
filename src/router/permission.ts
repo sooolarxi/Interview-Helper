@@ -6,9 +6,8 @@ import 'nprogress/nprogress.css'
 NProgress.configure({ showSpinner: false })
 
 router.beforeEach(() => {
-    NProgress.start()
-  }
-)
+  NProgress.start()
+})
 
 router.afterEach(() => {
   NProgress.done()
