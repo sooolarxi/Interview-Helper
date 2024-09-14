@@ -1,0 +1,34 @@
+{
+    "version": "0.2",
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "import": [],
+    "enableGlobDot": true,
+    "files": [
+        "**"
+    ],
+    "ignorePaths": [
+        "/.git",
+        "/.gitignore",
+        "/package-lock.json"
+    ],
+    "useGitignore": true,
+    "allowCompoundWords": true,
+    "enableFiletypes": [
+        "*"
+    ],
+    "includeRegExpList": [
+        "[\u0020-\u024F]"
+    ],
+    "words": [
+        "axios",
+        "pinia",
+        "nprogress",
+        "vite"
+    ],
+    "ignoreWords": [
+        "unplugin",
+        "persistedstate",
+        "preinstall"
+    ]
+}
