@@ -1,21 +1,67 @@
 <script setup lang="ts">
+import { constantRoute } from '@/router/routes'
 import { useUserStore } from '@/stores'
-import { onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import LayoutMenu from './components/LayoutMenu.vue'
+import { useRoute } from 'vue-router'
+import LayoutDropdown from './components/LayoutDropdown.vue'
 
 const userStore = useUserStore()
 onMounted(() => userStore.userGetInfo())
+
+const menuList = constantRoute.find((item) => item.path === '/')?.children || []
+const PCMenu = menuList.filter(
+  (item) => item.meta.device.includes('PC') && item.meta.group === 'menu'
+)
+const dorpdownList = menuList.filter((item) => item.meta.group === 'user')
+
+const route = useRoute()
+const title = ref(route.meta.title)
+watch(route, () => (title.value = route.meta.title))
 </script>
 
 <template>
-  <el-container>
-    <el-aside></el-aside>
+  <el-container class="layout-container">
+    <el-aside>
+      <div class="logo">logo</div>
+      <LayoutMenu :menu-list="PCMenu"></LayoutMenu>
+    </el-aside>
     <el-container>
-      <el-header></el-header>
-      <el-main></el-main>
+      <el-header>
+        <div class="title">{{ title }}</div>
+        <LayoutDropdown
+          :dorpdownList="dorpdownList"
+          :avatar="userStore.user?.user_pic"
+        ></LayoutDropdown>
+      </el-header>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
       <el-footer></el-footer>
     </el-container>
   </el-container>
-  <router-view></router-view>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+.layout-container {
+  height: 100vh;
+  .el-aside {
+    width: 200px;
+    height: 100vh;
+    background-color: black;
+    .logo {
+      height: 100px;
+      background-color: steelblue;
+    }
+  }
+  .el-header {
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .title {
+      font-size: 30px;
+    }
+  }
+}
+</style>

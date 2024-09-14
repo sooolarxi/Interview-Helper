@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { userLoginService, userRegService } from '@/api/user'
+import { userRegService } from '@/api/user'
 import { useUserStore } from '@/stores'
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const isLogin = ref(true)
 const formRef = ref()
@@ -46,12 +47,14 @@ const rules = {
   ]
 }
 
+const router = useRouter()
 const userStore = useUserStore()
 const login = async () => {
   await formRef.value.validate()
   try {
     await userStore.userLogin(formModel.value)
     ElMessage.success('Login successful')
+    router.push('/')
   } catch (error) {
     ElMessage.error('Login failed')
   }
