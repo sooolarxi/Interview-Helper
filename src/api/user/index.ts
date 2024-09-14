@@ -3,7 +3,8 @@ import type { userLoginRegForm, userLoginRegRes } from './type'
 
 enum API {
   LOGIN_URL = '/api/login',
-  REGISTER_URL = '/api/reg'
+  REGISTER_URL = '/api/reg',
+  USERINFO_URL = '/my/userinfo'
 }
 
 export const userLoginService = (data: userLoginRegForm) =>
@@ -11,3 +12,6 @@ export const userLoginService = (data: userLoginRegForm) =>
 
 export const userRegService = (data: userLoginRegForm) =>
   request.post<userLoginRegForm, userLoginRegRes>(API.REGISTER_URL, data)
+
+export const userGetInfoService = () =>
+  request.get<userGetInfoRes>(API.USERINFO_URL)

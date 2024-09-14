@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useUserStore } from '@/stores'
+import { onMounted } from 'vue'
+
+const userStore = useUserStore()
+onMounted(() => userStore.userGetInfo())
+</script>
 
 <template>
   <el-container>
