@@ -22,5 +22,5 @@ export interface userInfo {
 }
 
 export interface userGetInfoRes extends userResData {
-  data: userInfo
+  data?: userInfo
 }
