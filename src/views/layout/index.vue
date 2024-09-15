@@ -22,7 +22,7 @@ watch(route, () => (title.value = route.meta.title))
 
 <template>
   <el-container class="layout-container">
-    <el-aside>
+    <el-aside class="hidden-xs-only">
       <div class="logo">logo</div>
       <LayoutMenu :menu-list="PCMenu"></LayoutMenu>
     </el-aside>
@@ -31,16 +31,19 @@ watch(route, () => (title.value = route.meta.title))
       <el-header>
         <div class="title">{{ title }}</div>
         <LayoutDropdown
+          class="hidden-xs-only"
           :dorpdownList="dorpdownList"
           :avatar="userStore.user?.user_pic"
         ></LayoutDropdown>
       </el-header>
 
       <el-main>
-        <router-view></router-view>
+        <el-card style="width: 100%">
+          <router-view></router-view>
+        </el-card>
       </el-main>
 
-      <el-footer></el-footer>
+      <el-footer class="hidden-sm-and-up"></el-footer>
     </el-container>
   </el-container>
 </template>
@@ -58,13 +61,26 @@ watch(route, () => (title.value = route.meta.title))
     }
   }
   .el-container {
-    padding: 30px;
+    padding: 20px;
     .el-header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       .title {
         font-size: 30px;
       }
+    }
+    .el-card {
+      height: 100%;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-container .el-container {
+    padding: 10px;
+    .el-card {
+      height: auto;
     }
   }
 }

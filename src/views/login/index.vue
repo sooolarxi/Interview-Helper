@@ -94,11 +94,16 @@ watch(isLogin, () => {
             hide-required-asterisk
           >
             <el-form-item label="Username" prop="username">
-              <el-input v-model="formModel.username" prefix-icon="User" />
+              <el-input
+                v-model="formModel.username"
+                @blur="formModel.username = $event.target.value.trim()"
+                prefix-icon="User"
+              />
             </el-form-item>
             <el-form-item label="Password" prop="password">
               <el-input
                 v-model="formModel.password"
+                @blur="formModel.password = $event.target.value.trim()"
                 prefix-icon="Lock"
                 type="password"
                 show-password
@@ -128,11 +133,16 @@ watch(isLogin, () => {
             hide-required-asterisk
           >
             <el-form-item label="Username" prop="username">
-              <el-input v-model="formModel.username" prefix-icon="User" />
+              <el-input
+                v-model="formModel.username"
+                @blur="formModel.username = $event.target.value.trim()"
+                prefix-icon="User"
+              />
             </el-form-item>
             <el-form-item label="Password" prop="password">
               <el-input
                 v-model="formModel.password"
+                @blur="formModel.password = $event.target.value.trim()"
                 prefix-icon="Lock"
                 type="password"
                 show-password
@@ -141,6 +151,7 @@ watch(isLogin, () => {
             <el-form-item label="Confirm Password" prop="repassword">
               <el-input
                 v-model="formModel.repassword"
+                @blur="formModel.repassword = $event.target.value.trim()"
                 prefix-icon="Lock"
                 type="password"
                 show-password
