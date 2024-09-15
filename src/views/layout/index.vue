@@ -26,6 +26,7 @@ watch(route, () => (title.value = route.meta.title))
       <div class="logo">logo</div>
       <LayoutMenu :menu-list="PCMenu"></LayoutMenu>
     </el-aside>
+
     <el-container>
       <el-header>
         <div class="title">{{ title }}</div>
@@ -34,9 +35,11 @@ watch(route, () => (title.value = route.meta.title))
           :avatar="userStore.user?.user_pic"
         ></LayoutDropdown>
       </el-header>
+
       <el-main>
         <router-view></router-view>
       </el-main>
+
       <el-footer></el-footer>
     </el-container>
   </el-container>
@@ -54,13 +57,14 @@ watch(route, () => (title.value = route.meta.title))
       background-color: steelblue;
     }
   }
-  .el-header {
-    height: 100px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .title {
-      font-size: 30px;
+  .el-container {
+    padding: 30px;
+    .el-header {
+      display: flex;
+      justify-content: space-between;
+      .title {
+        font-size: 30px;
+      }
     }
   }
 }
