@@ -1,13 +1,30 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { qGetListService } from '@/api/questions'
+import type { qGetListForm, qListInfo } from '@/api/questions/type'
+import { ref, watchEffect } from 'vue'
 
-const tableData = ref([])
+const formModel = ref<qGetListForm>({
+  pagenum: 1,
+  pagesize: 3,
+  cate_id: '',
+  state: ''
+})
+const total = ref(0)
+
+const tableData = ref<qListInfo[]>([])
 const tableLoading = ref(false)
-const getCatList = async () => {
+const getQList = async () => {
   tableLoading.value = true
+  const res = await qGetListService(formModel.value)
+  total.value = res.total as number
+  tableData.value = res.data as qListInfo[]
+  tableData.value.forEach((item: qListInfo) => {
+    if (item.state === '已发布') item.state = 'Resolved'
+    else item.state = 'Unanswered'
+  })
   tableLoading.value = false
 }
-onMounted(() => getCatList())
+watchEffect(getQList)
 
 const handleRowClick = (row: any) => {
   console.log(row)
@@ -19,7 +36,7 @@ const handleDelete = async (id: number) => {
   console.log(id)
 
   ElMessage.success('Question deleted successfully')
-  getCatList()
+  getQList()
   delButtonLoading.value = false
 }
 
@@ -36,7 +53,7 @@ const handleactions = async () => {
   console.log(selectedRow)
 
   ElMessage.success('Question deleted successfully')
-  getCatList()
+  getQList()
   delButtonLoading.value = false
 }
 </script>
@@ -48,13 +65,15 @@ const handleactions = async () => {
         Add Question
       </el-button>
     </el-form-item>
-    <el-form-item label="Category: "></el-form-item>
-    <el-form-item label="Status: "></el-form-item>
-    <el-form-item>
-      <el-button type="primary" :disabled="false">Search</el-button>
+    <el-form-item class="w200" label="Category: "></el-form-item>
+    <el-form-item class="w200" label="Status: ">
+      <el-select v-model="formModel.state">
+        <el-option label="Resolved" value="已发布" />
+        <el-option label="Unanswered" value="草稿" />
+      </el-select>
     </el-form-item>
     <el-form-item>
-      <el-button :disabled="false">Reset</el-button>
+      <el-button :disabled="false" icon="RefreshLeft">Reset</el-button>
     </el-form-item>
   </el-form>
 
@@ -62,8 +81,8 @@ const handleactions = async () => {
     ref="tableRef"
     :data="tableData"
     v-loading="tableLoading"
-    style="width: 100%; margin: 5px 0"
-    max-height="350"
+    style="width: 100%; margin: 10px 0"
+    max-height="300"
     size="large"
     header-cell-class-name="custom-header-class"
     cell-class-name="custom-cell-class"
@@ -81,8 +100,11 @@ const handleactions = async () => {
 
     <el-table-column prop="cate_name" label="Category" sortable width="150" />
     <el-table-column prop="state" label="Status" sortable width="150" />
-    <el-table-column prop="pub_date" label="Date" sortable width="150" />
-
+    <el-table-column label="Date" sortable width="150">
+      <template #default="{ row }">
+        {{ new Date(row.pub_date).toLocaleDateString('en-GB') }}
+      </template>
+    </el-table-column>
     <el-table-column align="right" width="150">
       <template #header>
         <el-button
@@ -132,9 +154,23 @@ const handleactions = async () => {
       </template>
     </el-table-column>
   </el-table>
+
+  <el-pagination
+    v-model:current-page="formModel.pagenum"
+    v-model:page-size="formModel.pagesize"
+    :page-sizes="[3, 5, 10]"
+    background
+    layout="total, sizes, prev, pager, next"
+    :total="total"
+  />
 </template>
 
 <style scoped lang="scss">
+.el-form--inline {
+  .el-form-item.w200 {
+    width: 200px;
+  }
+}
 ::v-deep .custom-header-class {
   height: 60px;
   padding: 16px;

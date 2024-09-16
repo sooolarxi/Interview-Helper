@@ -133,7 +133,7 @@ const handleDeleteAll = async () => {
     ref="tableRef"
     :data="tableData"
     v-loading="tableLoading"
-    style="width: 100%; margin: 5px 0"
+    style="width: 100%; margin: 10px 0"
     max-height="350"
     size="large"
     header-cell-class-name="custom-header-class"

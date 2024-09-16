@@ -8,7 +8,7 @@ export interface qGetListForm {
   pagenum: number
   pagesize: number
   cate_id?: string
-  state: string
+  state?: string
 }
 
 export interface qListInfo {
