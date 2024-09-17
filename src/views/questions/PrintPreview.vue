@@ -18,12 +18,14 @@ onMounted(async () => {
     const res = await qGetInfoService(id.value)
     const data = res.data as qInfo
     data.content = stripHtmlTags(data.content as string)
+    if (data.content === 'No Data') data.content = ''
     qInfoArr.value.push(data)
   } else {
     const promises = (id.value as string[]).map(async (item: string) => {
       const res = await qGetInfoService(item)
       const data = res.data as qInfo
       data.content = stripHtmlTags(data.content as string)
+      if (data.content === 'No Data') data.content = ''
       return data
     })
     const res = await Promise.all(promises)

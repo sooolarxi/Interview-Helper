@@ -20,14 +20,31 @@ const defaultForm = {
   state: ''
 }
 const formModel = ref<qInfo>({ ...defaultForm })
+const formRef = ref()
+const rules = {
+  title: [
+    { required: true, message: 'Please enter a title', trigger: 'blur' },
+    {
+      min: 1,
+      max: 30,
+      message: 'Title must be 1-30 characters',
+      trigger: 'blur'
+    }
+  ],
+  cate_id: [
+    { required: true, message: 'Please select a category', trigger: 'change' }
+  ]
+}
 
 const editorRef = ref()
 const openDrawer = async (opr: string, id?: string) => {
+  formRef.value?.resetFields()
   drawerTitle.value = opr + ` Question`
   if (opr === 'Edit') {
     const loadingInstance = ElLoading.service()
     const res = await qGetInfoService(id as string)
     formModel.value = res.data as qInfo
+    if (formModel.value.content === 'No Data') formModel.value.content = ''
     nextTick(() => {
       loadingInstance.close()
       drawer.value = true
@@ -41,6 +58,12 @@ const openDrawer = async (opr: string, id?: string) => {
 
 const emit = defineEmits(['success'])
 const handleSubmit = async (state: string) => {
+  try {
+    await formRef.value.validate()
+  } catch (error) {
+    return
+  }
+  drawer.value = false
   formModel.value.state = state
   const defaultImage = new File(
     [new Blob([''], { type: 'image/jpeg' })],
@@ -48,6 +71,7 @@ const handleSubmit = async (state: string) => {
     { type: 'image/jpeg' }
   )
   formModel.value.cover_img = defaultImage
+  if (!formModel.value.content) formModel.value.content = 'No Data'
 
   const fd = new FormData()
   for (let key in formModel.value) {
@@ -62,7 +86,6 @@ const handleSubmit = async (state: string) => {
     emit('success', 'add')
   }
   ElMessage.success('Submission Successful')
-  drawer.value = false
 }
 
 defineExpose({ openDrawer })
@@ -70,11 +93,18 @@ defineExpose({ openDrawer })
 
 <template>
   <el-drawer v-model="drawer" size="50%" :title="drawerTitle" direction="rtl">
-    <el-form :model="formModel" label-width="50" style="padding: 0 2rem">
-      <el-form-item label="Title">
+    <el-form
+      ref="formRef"
+      :model="formModel"
+      :rules="rules"
+      label-width="50"
+      style="padding: 0 2rem"
+      hide-required-asterisk
+    >
+      <el-form-item label="Title" prop="title">
         <el-input v-model="formModel.title" />
       </el-form-item>
-      <el-form-item label="Category">
+      <el-form-item label="Category" prop="cate_id">
         <CategorySelect v-model="formModel.cate_id"></CategorySelect>
       </el-form-item>
       <el-form-item label="Answer">
