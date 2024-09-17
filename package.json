@@ -57,5 +57,8 @@
     "*.{js,ts,vue}": [
       "eslint --fix"
     ]
+  },
+  "resolutions": {
+    "quill": "^2.0.2"
   }
 }
