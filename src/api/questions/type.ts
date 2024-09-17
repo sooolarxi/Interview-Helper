@@ -11,34 +11,26 @@ export interface qGetListForm {
   state?: string
 }
 
-export interface qListInfo {
-  id: number
-  title: string
-  cate_name: string
-  state: string | null
-  pub_date: string
-}
-
 export interface qGetListRes extends qResData {
-  data?: qListInfo[]
+  data?: qInfo[]
   total?: number
 }
 
-export interface qInfoForm {
+export interface qInfo {
+  id?: string
   title: string
-  content: string
-  cate_id: number
-  cover_img: File
+  content?: string
+  cate_name?: string
+  cate_id?: string
+  cover_img?: File | string
+  pub_date?: string
   state: string
+  tagType?: string
+  author_id?: number
+  username?: string
+  nickname?: string
 }
 
-export type CombinedInfo = qListInfo &
-  qInfoForm & {
-    author_id: number
-    username: string
-    nickname: string
-  }
-
 export interface qGetInfoRes extends qResData {
-  data?: CombinedInfo
+  data?: qInfo
 }

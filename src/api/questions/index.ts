@@ -1,11 +1,5 @@
 import request from '@/utils/request'
-import type {
-  qGetInfoRes,
-  qGetListForm,
-  qGetListRes,
-  qInfoForm,
-  qResData
-} from './type'
+import type { qGetInfoRes, qGetListForm, qGetListRes, qResData } from './type'
 
 enum API {
   QLIST_URL = '/my/article/list',
@@ -16,14 +10,14 @@ enum API {
 export const qGetListService = (data: qGetListForm) =>
   request.get<void, qGetListRes>(API.QLIST_URL, { params: data })
 
-export const qAddInfoService = (data: qInfoForm) =>
-  request.post<void, qResData>(API.QINFO_URL, data)
+export const qAddInfoService = (data: FormData) =>
+  request.post<void, qResData>(API.ADDQ_URL, data)
 
-export const qGetInfoService = (id: number) =>
+export const qGetInfoService = (id: string) =>
   request.get<void, qGetInfoRes>(API.QINFO_URL, { params: { id } })
 
-export const qUpdateInfoService = (id: number, data: qInfoForm) =>
-  request.put<void, qResData>(API.QINFO_URL + `/${id}`, data)
+export const qUpdateInfoService = (data: FormData) =>
+  request.put<void, qResData>(API.QINFO_URL, data)
 
-export const qDelInfoService = (id: number) =>
+export const qDelInfoService = (id: string) =>
   request.delete<void, qResData>(API.QINFO_URL, { params: { id } })

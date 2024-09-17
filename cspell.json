@@ -32,6 +32,7 @@
         "preinstall",
         "QLIST",
         "QINFO",
-        "ADDQ"
+        "ADDQ",
+        "vueup"
     ]
 }

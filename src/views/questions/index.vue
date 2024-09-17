@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { qGetListService } from '@/api/questions'
-import type { qGetListForm, qListInfo } from '@/api/questions/type'
-import { ref, watchEffect } from 'vue'
+import type { qGetListForm, qInfo } from '@/api/questions/type'
+import { ref, watch, watchEffect } from 'vue'
+import CategorySelect from './components/CategorySelect.vue'
+import QuestionEdit from './components/QuestionEdit.vue'
 
 const formModel = ref<qGetListForm>({
   pagenum: 1,
@@ -11,23 +13,47 @@ const formModel = ref<qGetListForm>({
 })
 const total = ref(0)
 
-const tableData = ref<qListInfo[]>([])
+const tableRef = ref()
+const tableData = ref<qInfo[]>([])
 const tableLoading = ref(false)
 const getQList = async () => {
   tableLoading.value = true
   const res = await qGetListService(formModel.value)
   total.value = res.total as number
-  tableData.value = res.data as qListInfo[]
-  tableData.value.forEach((item: qListInfo) => {
-    if (item.state === '已发布') item.state = 'Resolved'
-    else item.state = 'Unanswered'
+  tableData.value = res.data as qInfo[]
+  tableData.value.forEach((item: qInfo) => {
+    if (item.state === '已发布') {
+      item.state = 'Resolved'
+      item.tagType = 'warning'
+    } else {
+      item.state = 'Unanswered'
+      item.tagType = 'danger'
+    }
   })
   tableLoading.value = false
 }
+watch(
+  () => formModel.value.pagesize,
+  () => (formModel.value.pagenum = 1)
+)
 watchEffect(getQList)
+const reset = () => {
+  formModel.value.cate_id = ''
+  formModel.value.state = ''
+}
 
-const handleRowClick = (row: any) => {
-  console.log(row)
+const drawerRef = ref()
+const addQuestion = () => drawerRef.value.openDrawer('Add')
+const handleRowClick = (row: qInfo) => {
+  drawerRef.value.openDrawer('Edit', row.id)
+}
+const handleSuccess = (type: string) => {
+  if (type === 'add') {
+    formModel.value.pagenum = Math.ceil(
+      (total.value + 1) / formModel.value.pagesize
+    )
+  }
+  getQList()
 }
 
 const delButtonLoading = ref(false)
@@ -39,15 +65,12 @@ const handleDelete = async (id: number) => {
   getQList()
   delButtonLoading.value = false
 }
-
 const actions = ref(false)
 const handleSelectionChange = (newSelection: any) => {
   if (newSelection.length > 0) actions.value = true
   else actions.value = false
 }
-
-const tableRef = ref()
-const handleactions = async () => {
+const handleActions = async () => {
   delButtonLoading.value = true
   const selectedRow = tableRef.value.getSelectionRows()
   console.log(selectedRow)
@@ -61,11 +84,13 @@ const handleactions = async () => {
 <template>
   <el-form inline>
     <el-form-item>
-      <el-button type="primary" icon="Plus" :disabled="false">
+      <el-button type="primary" icon="Plus" @click="addQuestion">
         Add Question
       </el-button>
     </el-form-item>
-    <el-form-item class="w200" label="Category: "></el-form-item>
+    <el-form-item class="w200" label="Category: ">
+      <CategorySelect v-model="formModel.cate_id"></CategorySelect>
+    </el-form-item>
     <el-form-item class="w200" label="Status: ">
       <el-select v-model="formModel.state">
         <el-option label="Resolved" value="已发布" />
@@ -73,7 +98,9 @@ const handleactions = async () => {
       </el-select>
     </el-form-item>
     <el-form-item>
-      <el-button :disabled="false" icon="RefreshLeft">Reset</el-button>
+      <el-button :disabled="false" icon="RefreshLeft" @click="reset">
+        Reset
+      </el-button>
     </el-form-item>
   </el-form>
 
@@ -98,14 +125,46 @@ const handleactions = async () => {
       </template>
     </el-table-column>
 
-    <el-table-column prop="cate_name" label="Category" sortable width="150" />
-    <el-table-column prop="state" label="Status" sortable width="150" />
-    <el-table-column label="Date" sortable width="150">
+    <el-table-column
+      header-align="center"
+      align="center"
+      label="Category"
+      prop="cate_name"
+      sortable
+      width="160"
+    >
+      <template #default="{ row }">
+        <el-tag type="primary">{{ row.cate_name }}</el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column
+      header-align="center"
+      align="center"
+      label="Status"
+      prop="state"
+      sortable
+      width="160"
+    >
+      <template #default="{ row }">
+        <el-tag :type="row.tagType" round>
+          {{ row.state }}
+        </el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column
+      header-align="center"
+      align="center"
+      label="Date"
+      prop="pub_date"
+      sortable
+      width="140"
+    >
       <template #default="{ row }">
         {{ new Date(row.pub_date).toLocaleDateString('en-GB') }}
       </template>
     </el-table-column>
-    <el-table-column align="right" width="150">
+
+    <el-table-column align="right" width="130">
       <template #header>
         <el-button
           v-show="actions"
@@ -119,7 +178,7 @@ const handleactions = async () => {
 
         <el-popconfirm
           title="Are you sure to delete this question?"
-          @confirm="handleactions"
+          @confirm="handleActions"
         >
           <template #reference>
             <el-button
@@ -135,6 +194,14 @@ const handleactions = async () => {
         </el-popconfirm>
       </template>
       <template #default="{ row }">
+        <el-button
+          size="small"
+          type="success"
+          icon="Printer"
+          :loading="delButtonLoading"
+          circle
+          plain
+        ></el-button>
         <el-popconfirm
           title="Are you sure to delete this question?"
           @confirm="handleDelete(row.id)"
@@ -163,6 +230,8 @@ const handleactions = async () => {
     layout="total, sizes, prev, pager, next"
     :total="total"
   />
+
+  <QuestionEdit ref="drawerRef" @success="handleSuccess"></QuestionEdit>
 </template>
 
 <style scoped lang="scss">

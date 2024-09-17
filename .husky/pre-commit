@@ -3,4 +3,3 @@
 
 pnpm spell-check
 pnpm lint-staged
-git add .

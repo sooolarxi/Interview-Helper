@@ -8,6 +8,7 @@ import {
   catUpdateService
 } from '@/api/category'
 
+const tableRef = ref()
 const tableData = ref<catInfo[]>([])
 const tableLoading = ref(false)
 const getCatList = async () => {
@@ -66,7 +67,7 @@ const toView = async (row: catInfo) => {
       `Are you sure you want to change the category name to ${edit_cate_name.value}?`,
       'Warning',
       {
-        confirmButtonText: 'OK',
+        confirmButtonText: 'Yes',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }
@@ -85,14 +86,11 @@ const handleDelete = async (id: number) => {
   getCatList()
   delButtonLoading.value = false
 }
-
 const deleteAll = ref(false)
 const handleSelectionChange = (newSelection: catInfo[]) => {
   if (newSelection.length > 0) deleteAll.value = true
   else deleteAll.value = false
 }
-
-const tableRef = ref()
 const handleDeleteAll = async () => {
   delButtonLoading.value = true
   const selectedRow = tableRef.value.getSelectionRows()
