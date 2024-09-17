@@ -26,6 +26,7 @@
     "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^3.2.3",
     "vue": "^3.5.4",
+    "vue-print-next": "^1.0.8",
     "vue-router": "^4.4.4"
   },
   "devDependencies": {
