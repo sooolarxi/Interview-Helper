@@ -39,6 +39,16 @@ export const constantRoute = [
         }
       },
       {
+        path: '/questions/print',
+        component: () => import('@/views/questions/PrintPreview.vue'),
+        meta: {
+          title: 'Print Preview',
+          device: ['PC', 'mobile'],
+          icon: '',
+          group: ''
+        }
+      },
+      {
         path: '/user',
         component: () => import('@/views/user/index.vue'),
         meta: {

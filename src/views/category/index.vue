@@ -100,7 +100,7 @@ const handleDeleteAll = async () => {
   })
 
   await Promise.all(deletePromises)
-  ElMessage.success('Category deleted successfully')
+  ElMessage.success('Categories deleted successfully')
   getCatList()
   delButtonLoading.value = false
 }

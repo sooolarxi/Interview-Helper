@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { qGetListService } from '@/api/questions'
+import { qDelInfoService, qGetListService } from '@/api/questions'
 import type { qGetListForm, qInfo } from '@/api/questions/type'
 import { ref, watch, watchEffect } from 'vue'
 import CategorySelect from './components/CategorySelect.vue'
 import QuestionEdit from './components/QuestionEdit.vue'
+import { useRouter } from 'vue-router'
 
 const formModel = ref<qGetListForm>({
   pagenum: 1,
@@ -56,28 +57,42 @@ const handleSuccess = (type: string) => {
   getQList()
 }
 
-const delButtonLoading = ref(false)
-const handleDelete = async (id: number) => {
-  delButtonLoading.value = true
-  console.log(id)
-
+const buttonLoading = ref(false)
+const handleDelete = async (id: string) => {
+  buttonLoading.value = true
+  await qDelInfoService(id)
   ElMessage.success('Question deleted successfully')
   getQList()
-  delButtonLoading.value = false
+  buttonLoading.value = false
 }
 const actions = ref(false)
 const handleSelectionChange = (newSelection: any) => {
   if (newSelection.length > 0) actions.value = true
   else actions.value = false
 }
-const handleActions = async () => {
-  delButtonLoading.value = true
+const handleDeleteAll = async () => {
+  buttonLoading.value = true
   const selectedRow = tableRef.value.getSelectionRows()
-  console.log(selectedRow)
-
-  ElMessage.success('Question deleted successfully')
+  const deletePromises = selectedRow.map(async (item: qInfo) => {
+    await qDelInfoService(item.id as string)
+  })
+  await Promise.all(deletePromises)
+  ElMessage.success('Questions deleted successfully')
   getQList()
-  delButtonLoading.value = false
+  buttonLoading.value = false
+}
+
+const router = useRouter()
+const print = (row?: qInfo) => {
+  const selectedRowID = tableRef.value
+    .getSelectionRows()
+    .map((item: qInfo) => item.id)
+  router.push({
+    path: '/questions/print',
+    query: {
+      id: selectedRowID.length ? selectedRowID : row?.id
+    }
+  })
 }
 </script>
 
@@ -134,7 +149,7 @@ const handleActions = async () => {
       width="160"
     >
       <template #default="{ row }">
-        <el-tag type="primary">{{ row.cate_name }}</el-tag>
+        <el-tag type="primary" round>{{ row.cate_name }}</el-tag>
       </template>
     </el-table-column>
     <el-table-column
@@ -171,14 +186,15 @@ const handleActions = async () => {
           size="small"
           type="success"
           icon="Printer"
-          :loading="delButtonLoading"
+          :loading="buttonLoading"
           circle
           plain
+          @click="print"
         ></el-button>
 
         <el-popconfirm
           title="Are you sure to delete this question?"
-          @confirm="handleActions"
+          @confirm="handleDeleteAll"
         >
           <template #reference>
             <el-button
@@ -186,7 +202,7 @@ const handleActions = async () => {
               size="small"
               type="danger"
               icon="Delete"
-              :loading="delButtonLoading"
+              :loading="buttonLoading"
               circle
               plain
             ></el-button>
@@ -198,9 +214,10 @@ const handleActions = async () => {
           size="small"
           type="success"
           icon="Printer"
-          :loading="delButtonLoading"
+          :loading="buttonLoading"
           circle
           plain
+          @click.stop="print(row)"
         ></el-button>
         <el-popconfirm
           title="Are you sure to delete this question?"
@@ -211,7 +228,7 @@ const handleActions = async () => {
               size="small"
               type="danger"
               icon="Delete"
-              :loading="delButtonLoading"
+              :loading="buttonLoading"
               circle
               plain
               @click.stop
