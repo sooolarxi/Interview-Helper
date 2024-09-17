@@ -35,7 +35,11 @@ const checkCatName = (data: catInfo[], newName: string) => {
 const addButtonLoading = ref(false)
 const add_cate_name = ref<string>('')
 const handleAdd = async () => {
-  await checkCatName(tableData.value, add_cate_name.value)
+  try {
+    await checkCatName(tableData.value, add_cate_name.value)
+  } catch (error) {
+    return
+  }
   addButtonLoading.value = true
   await catAddService({
     cate_name: add_cate_name.value,
@@ -61,17 +65,25 @@ const toView = async (row: catInfo) => {
   edit_cate_name.value = edit_cate_name.value.trim()
   if (edit_cate_name.value !== row.cate_name) {
     const data = tableData.value.filter((item) => item !== row)
-    await checkCatName(data, edit_cate_name.value)
+    try {
+      await checkCatName(data, edit_cate_name.value)
+    } catch (error) {
+      return
+    }
 
-    await ElMessageBox.confirm(
-      `Are you sure you want to change the category name to ${edit_cate_name.value}?`,
-      'Warning',
-      {
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }
-    )
+    try {
+      await ElMessageBox.confirm(
+        `Are you sure you want to change the category name to ${edit_cate_name.value}?`,
+        'Warning',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }
+      )
+    } catch (error) {
+      return
+    }
     row.cate_name = edit_cate_name.value
     await catUpdateService(row)
     ElMessage.success('Category updated successfully')

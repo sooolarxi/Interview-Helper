@@ -50,7 +50,11 @@ const rules = {
 const router = useRouter()
 const userStore = useUserStore()
 const login = async () => {
-  await formRef.value.validate()
+  try {
+    await formRef.value.validate()
+  } catch (error) {
+    return
+  }
   try {
     await userStore.userLogin(formModel.value)
     ElMessage.success('Login successful')
@@ -60,7 +64,11 @@ const login = async () => {
   }
 }
 const register = async () => {
-  await formRef.value.validate()
+  try {
+    await formRef.value.validate()
+  } catch (error) {
+    return
+  }
   const res = await userRegService(formModel.value)
   if (res.code === 0) {
     ElMessage.success('Registration successful')
@@ -198,7 +206,6 @@ watch(isLogin, () => {
 
       .el-button {
         width: 100%;
-        // font-family: 'Arial', 'Helvetica', 'sans-serif';
       }
     }
 
