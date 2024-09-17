@@ -1,7 +1,7 @@
 @import './reset.scss';
 @import url('element-plus/theme-chalk/display.css');
 
-html {
+html, .el-button {
   font-family: Inter, 'Helvetica Neue', Helvetica, 'PingFang SC',
       'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
 }
