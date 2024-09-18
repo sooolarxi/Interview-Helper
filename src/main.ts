@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 
 import App from './App.vue'
 import router from './router'
-import pinia from './stores'
+import pinia, { useDeviceStore, useUserStore } from './stores'
 
 import '@/styles/index.scss'
 
@@ -23,4 +23,13 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
+const { checkDevice } = useDeviceStore()
+window.addEventListener('resize', checkDevice)
+const { getStatistic } = useUserStore()
+getStatistic()
+
 app.mount('#app')
+app.unmount = () => {
+  window.removeEventListener('resize', checkDevice)
+  app.unmount()
+}
