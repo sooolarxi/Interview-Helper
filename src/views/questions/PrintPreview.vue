@@ -4,6 +4,10 @@ import type { qInfo } from '@/api/questions/type'
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { vPrint } from 'vue-print-next'
+import { storeToRefs } from 'pinia'
+import { useDeviceStore } from '@/stores'
+
+const { isMobile } = storeToRefs(useDeviceStore())
 
 const route = useRoute()
 const id = ref(route.query.id)
@@ -45,13 +49,13 @@ watch(
 </script>
 
 <template>
-  <el-scrollbar height="400px">
+  <el-scrollbar :height="isMobile ? '800px' : '400px'">
     <div class="container">
       <el-form
         :model="formModel"
         label-width="auto"
         label-position="top"
-        style="max-width: 250px"
+        style="max-width: 250px; margin-bottom: 20px"
       >
         <el-form-item label="Font size">
           <el-radio-group v-model="formModel.fontSize">
@@ -134,11 +138,23 @@ watch(
   padding: 10px;
   display: flex;
   justify-content: space-evenly;
+  @media (max-width: 768px) {
+    display: block;
+  }
   #questions {
     width: 210mm;
     height: 297mm;
     box-shadow: 0 0 10px;
     zoom: 0.5;
+    @media (max-width: 360px) {
+      zoom: 0.25;
+    }
+    @media (max-width: 414px) {
+      zoom: 0.3;
+    }
+    @media (max-width: 480px) {
+      zoom: 0.35;
+    }
   }
 }
 </style>

@@ -2,13 +2,16 @@
 import { qDelInfoService, qGetListService } from '@/api/questions'
 import type { qGetListForm, qInfo } from '@/api/questions/type'
 import { ref, watch, watchEffect } from 'vue'
-import CategorySelect from './components/CategorySelect.vue'
-import QuestionEdit from './components/QuestionEdit.vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useDeviceStore, useUserStore } from '@/stores'
+
+const { isMobile } = storeToRefs(useDeviceStore())
+const { totalQ, totalRQ, totalUQ } = storeToRefs(useUserStore())
 
 const formModel = ref<qGetListForm>({
   pagenum: 1,
-  pagesize: 3,
+  pagesize: isMobile ? 10 : 4,
   cate_id: '',
   state: ''
 })
@@ -33,6 +36,7 @@ const getQList = async () => {
   })
   tableLoading.value = false
 }
+defineExpose({ getQList })
 watch(
   () => formModel.value.pagesize,
   () => (formModel.value.pagenum = 1)
@@ -48,20 +52,14 @@ const addQuestion = () => drawerRef.value.openDrawer('Add')
 const handleRowClick = (row: qInfo) => {
   drawerRef.value.openDrawer('Edit', row.id)
 }
-const handleSuccess = (type: string) => {
-  if (type === 'add') {
-    formModel.value.pagenum = Math.ceil(
-      (total.value + 1) / formModel.value.pagesize
-    )
-  }
-  getQList()
-}
 
 const buttonLoading = ref(false)
-const handleDelete = async (id: string) => {
+const handleDelete = async (id: string, state: string) => {
   buttonLoading.value = true
   await qDelInfoService(id)
   ElMessage.success('Question deleted successfully')
+  totalQ.value--
+  state === 'Resolved' ? totalRQ.value-- : totalUQ.value--
   getQList()
   buttonLoading.value = false
 }
@@ -75,6 +73,8 @@ const handleDeleteAll = async () => {
   const selectedRow = tableRef.value.getSelectionRows()
   const deletePromises = selectedRow.map(async (item: qInfo) => {
     await qDelInfoService(item.id as string)
+    totalQ.value--
+    item.state === 'Resolved' ? totalRQ.value-- : totalUQ.value--
   })
   await Promise.all(deletePromises)
   ElMessage.success('Questions deleted successfully')
@@ -103,6 +103,11 @@ const print = (row?: qInfo) => {
         Add Question
       </el-button>
     </el-form-item>
+    <el-form-item class="hidden-sm-and-up">
+      <el-button :disabled="false" icon="RefreshLeft" @click="reset">
+        Reset
+      </el-button>
+    </el-form-item>
     <el-form-item class="w200" label="Category: ">
       <CategorySelect v-model="formModel.cate_id"></CategorySelect>
     </el-form-item>
@@ -112,7 +117,7 @@ const print = (row?: qInfo) => {
         <el-option label="Unanswered" value="草稿" />
       </el-select>
     </el-form-item>
-    <el-form-item>
+    <el-form-item class="hidden-xs-only">
       <el-button :disabled="false" icon="RefreshLeft" @click="reset">
         Reset
       </el-button>
@@ -124,23 +129,33 @@ const print = (row?: qInfo) => {
     :data="tableData"
     v-loading="tableLoading"
     style="width: 100%; margin: 10px 0"
-    max-height="300"
+    :max-height="isMobile ? 'none' : 300"
     size="large"
     header-cell-class-name="custom-header-class"
     cell-class-name="custom-cell-class"
     @selection-change="handleSelectionChange"
     @row-click="handleRowClick"
   >
-    <el-table-column type="selection" width="55" align="right" />
+    <el-table-column type="selection" width="45" align="right" />
+
     <el-table-column label="Title">
       <template #default="{ row }">
         <el-link :underline="false" style="font-weight: 600">
           {{ row.title }}
         </el-link>
+        <div v-if="isMobile" class="tags">
+          <el-tag style="margin-right: 5px" type="primary" round>
+            {{ row.cate_name }}
+          </el-tag>
+          <el-tag :type="row.tagType" round>
+            {{ row.state === 'Resolved' ? 'R' : 'U' }}
+          </el-tag>
+        </div>
       </template>
     </el-table-column>
 
     <el-table-column
+      v-if="!isMobile"
       header-align="center"
       align="center"
       label="Category"
@@ -153,6 +168,7 @@ const print = (row?: qInfo) => {
       </template>
     </el-table-column>
     <el-table-column
+      v-if="!isMobile"
       header-align="center"
       align="center"
       label="Status"
@@ -167,6 +183,7 @@ const print = (row?: qInfo) => {
       </template>
     </el-table-column>
     <el-table-column
+      v-if="!isMobile"
       header-align="center"
       align="center"
       label="Date"
@@ -179,7 +196,7 @@ const print = (row?: qInfo) => {
       </template>
     </el-table-column>
 
-    <el-table-column align="right" width="130">
+    <el-table-column align="right" width="125">
       <template #header>
         <el-button
           v-show="actions"
@@ -221,7 +238,7 @@ const print = (row?: qInfo) => {
         ></el-button>
         <el-popconfirm
           title="Are you sure to delete this question?"
-          @confirm="handleDelete(row.id)"
+          @confirm="handleDelete(row.id, row.state)"
         >
           <template #reference>
             <el-button
@@ -240,15 +257,20 @@ const print = (row?: qInfo) => {
   </el-table>
 
   <el-pagination
+    :size="isMobile ? 'small' : 'default'"
     v-model:current-page="formModel.pagenum"
     v-model:page-size="formModel.pagesize"
-    :page-sizes="[3, 5, 10]"
+    :page-sizes="[4, 8, 10]"
     background
-    layout="total, sizes, prev, pager, next"
+    :layout="
+      isMobile ? 'sizes, prev, slot, next' : 'total, sizes, prev, pager, next'
+    "
     :total="total"
-  />
+  >
+    {{ `${formModel.pagenum} / ${Math.ceil(total / formModel.pagesize)}` }}
+  </el-pagination>
 
-  <QuestionEdit ref="drawerRef" @success="handleSuccess"></QuestionEdit>
+  <QuestionEdit ref="drawerRef" @success="getQList"></QuestionEdit>
 </template>
 
 <style scoped lang="scss">
@@ -257,12 +279,25 @@ const print = (row?: qInfo) => {
     width: 200px;
   }
 }
+@media (max-width: 768px) {
+  .el-pagination {
+    justify-content: center;
+  }
+}
 ::v-deep .custom-header-class {
   height: 60px;
   padding: 16px;
+  @media (max-width: 768px) {
+    height: 50px;
+    padding: 0px;
+  }
 }
 ::v-deep .custom-cell-class {
   height: 60px;
   padding: 16px;
+  @media (max-width: 768px) {
+    height: 80px;
+    padding: 0px;
+  }
 }
 </style>

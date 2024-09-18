@@ -7,6 +7,10 @@ import {
   catGetListService,
   catUpdateService
 } from '@/api/category'
+import { useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+
+const { totalCat } = storeToRefs(useUserStore())
 
 const tableRef = ref()
 const tableData = ref<catInfo[]>([])
@@ -41,13 +45,18 @@ const handleAdd = async () => {
     return
   }
   addButtonLoading.value = true
-  await catAddService({
+  const res = await catAddService({
     cate_name: add_cate_name.value,
     cate_alias: 'none'
   })
+  if (res.code === 1) {
+    ElMessage.error('Category already exists!')
+    return
+  }
   add_cate_name.value = ''
   addButtonLoading.value = false
   ElMessage.success('Category added successfully')
+  totalCat.value++
   getCatList()
 }
 
@@ -95,6 +104,7 @@ const handleDelete = async (id: number) => {
   delButtonLoading.value = true
   await catDelService(id)
   ElMessage.success('Category deleted successfully')
+  totalCat.value--
   getCatList()
   delButtonLoading.value = false
 }
@@ -109,6 +119,7 @@ const handleDeleteAll = async () => {
 
   const deletePromises = selectedRow.map(async (item: catInfo) => {
     await catDelService(item.id as number)
+    totalCat.value--
   })
 
   await Promise.all(deletePromises)
@@ -151,7 +162,7 @@ const handleDeleteAll = async () => {
     @selection-change="handleSelectionChange"
     @row-click="handleRowClick"
   >
-    <el-table-column type="selection" width="55" align="right" />
+    <el-table-column type="selection" width="45" align="right" />
     <el-table-column label="Category Name">
       <template #default="{ row }">
         <el-input
@@ -166,7 +177,7 @@ const handleDeleteAll = async () => {
         </el-link>
       </template>
     </el-table-column>
-    <el-table-column align="right">
+    <el-table-column align="right" width="90">
       <template #header>
         <el-popconfirm
           title="Are you sure to delete this category?"
@@ -208,12 +219,13 @@ const handleDeleteAll = async () => {
 </template>
 
 <style scoped lang="scss">
-::v-deep .custom-header-class {
-  height: 60px;
-  padding: 16px;
-}
+::v-deep .custom-header-class,
 ::v-deep .custom-cell-class {
   height: 60px;
   padding: 16px;
+  @media (max-width: 768px) {
+    height: 50px;
+    padding: 0px;
+  }
 }
 </style>

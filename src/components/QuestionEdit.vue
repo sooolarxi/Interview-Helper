@@ -9,6 +9,12 @@ import {
 } from '@/api/questions'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import { useDeviceStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+
+const { isMobile } = storeToRefs(useDeviceStore())
+const { totalCat, totalQ, totalRQ, totalUQ } = storeToRefs(useUserStore())
 
 const drawer = ref(false)
 const drawerTitle = ref('')
@@ -32,10 +38,11 @@ const rules = {
     }
   ],
   cate_id: [
-    { required: true, message: 'Please select a category', trigger: 'change' }
+    { required: true, message: 'Please select a category', trigger: 'blur' }
   ]
 }
 
+const router = useRouter()
 const editorRef = ref()
 const openDrawer = async (opr: string, id?: string) => {
   formRef.value?.resetFields()
@@ -50,6 +57,11 @@ const openDrawer = async (opr: string, id?: string) => {
       drawer.value = true
     })
   } else {
+    if (totalCat.value === 0) {
+      ElMessage.warning('Please create a category first!')
+      router.push('/category')
+      return
+    }
     editorRef.value?.setHTML('')
     formModel.value = { ...defaultForm }
     drawer.value = true
@@ -84,6 +96,8 @@ const handleSubmit = async (state: string) => {
   } else {
     await qAddInfoService(fd)
     emit('success', 'add')
+    totalQ.value++
+    state === '已发布' ? totalRQ.value++ : totalUQ.value++
   }
   ElMessage.success('Submission Successful')
 }
@@ -92,7 +106,12 @@ defineExpose({ openDrawer })
 </script>
 
 <template>
-  <el-drawer v-model="drawer" size="50%" :title="drawerTitle" direction="rtl">
+  <el-drawer
+    v-model="drawer"
+    :size="isMobile ? '90%' : '50%'"
+    :title="drawerTitle"
+    :direction="isMobile ? 'btt' : 'rtl'"
+  >
     <el-form
       ref="formRef"
       :model="formModel"
@@ -114,6 +133,7 @@ defineExpose({ openDrawer })
             theme="snow"
             v-model:content="formModel.content"
             contentType="html"
+            :toolbar="isMobile ? 'minimal' : 'full'"
           ></quill-editor>
         </div>
       </el-form-item>
