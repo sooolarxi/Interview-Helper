@@ -57,6 +57,36 @@ export const constantRoute = [
           icon: 'Avatar',
           group: 'menu'
         }
+      },
+      {
+        path: '/user/profile',
+        component: () => import('@/views/user/UserProfile.vue'),
+        meta: {
+          title: 'User Profile',
+          device: ['PC', 'mobile'],
+          icon: 'User',
+          group: 'user'
+        }
+      },
+      {
+        path: '/user/avatar',
+        component: () => import('@/views/user/ChangeAvatar.vue'),
+        meta: {
+          title: 'Change Avatar',
+          device: ['PC', 'mobile'],
+          icon: 'Crop',
+          group: 'user'
+        }
+      },
+      {
+        path: '/user/password',
+        component: () => import('@/views/user/ResetPassword.vue'),
+        meta: {
+          title: 'Reset Password',
+          device: ['PC', 'mobile'],
+          icon: 'EditPen',
+          group: 'user'
+        }
       }
     ]
   }
