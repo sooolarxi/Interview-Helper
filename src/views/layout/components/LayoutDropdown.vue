@@ -1,12 +1,30 @@
 <script setup lang="ts">
+import { useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
 defineProps(['dorpdownList', 'avatar'])
 
+const { token, user } = storeToRefs(useUserStore())
 const router = useRouter()
-const handleCommand = (command: string) => {
+const handleCommand = async (command: string) => {
   if (command === 'logout') {
-    console.log(command)
+    try {
+      await ElMessageBox.confirm(
+        `Are you sure you want to log out?`,
+        'Warning',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }
+      )
+    } catch (error) {
+      return
+    }
+    token.value = ''
+    user.value = undefined
+    router.push('/login')
   } else {
     router.push(command)
   }

@@ -58,7 +58,7 @@ const rules = {
   ]
 }
 
-const { token } = storeToRefs(useUserStore())
+const { token, user } = storeToRefs(useUserStore())
 const router = useRouter()
 const handleSubmit = async () => {
   try {
@@ -72,6 +72,7 @@ const handleSubmit = async () => {
   } else {
     ElMessage.success('Update Successful')
     token.value = ''
+    user.value = undefined
     router.push('/login')
   }
 }

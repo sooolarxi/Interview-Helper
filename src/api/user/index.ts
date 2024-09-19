@@ -12,7 +12,8 @@ enum API {
   LOGIN_URL = '/api/login',
   REGISTER_URL = '/api/reg',
   USERINFO_URL = '/my/userinfo',
-  UPDATEPWD_URL = '/my/updatepwd'
+  UPDATEPWD_URL = '/my/updatepwd',
+  UPDATEAVATAR_URL = '/my/update/avatar'
 }
 
 export const userLoginService = (data: userLoginRegForm) =>
@@ -29,3 +30,6 @@ export const userUpdateInfoService = (data: userInfo) =>
 
 export const userUpdatePwdService = (data: userUpdatePwdForm) =>
   request.patch<void, userResData>(API.UPDATEPWD_URL, data)
+
+export const userUpdateAvatarService = (data: string) =>
+  request.patch<void, userResData>(API.UPDATEAVATAR_URL, data)
