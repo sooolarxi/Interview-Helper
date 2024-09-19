@@ -1,5 +1,72 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { constantRoute } from '@/router/routes'
+import { useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
-<template>user</template>
+const userMenuList =
+  constantRoute
+    .find((item) => item.path === '/')
+    ?.children?.filter((item) => item.meta.group === 'user') || []
 
-<style scoped></style>
+const { token, user } = storeToRefs(useUserStore())
+const router = useRouter()
+const handleSelect = async (MenuSelectEvent: string) => {
+  if (MenuSelectEvent === 'logout') {
+    try {
+      await ElMessageBox.confirm(
+        `Are you sure you want to log out?`,
+        'Warning',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }
+      )
+    } catch (error) {
+      return
+    }
+    token.value = ''
+    user.value = undefined
+    router.push('/login')
+  } else {
+    router.push(MenuSelectEvent)
+  }
+}
+</script>
+
+<template>
+  <div class="avatar">
+    <el-avatar v-if="user?.user_pic" :src="user?.user_pic" />
+    <el-avatar v-else icon="UserFilled" />
+    <span style="margin-left: 10px">
+      {{ user?.nickname || user?.username }}
+    </span>
+  </div>
+  <el-menu @select="handleSelect">
+    <el-menu-item
+      v-for="item in userMenuList"
+      :key="item.path"
+      :index="item.path"
+    >
+      <el-icon><component :is="item.meta.icon" /></el-icon>
+      <span>{{ item.meta.title }}</span>
+    </el-menu-item>
+    <el-menu-item index="logout">
+      <el-icon><SwitchButton /></el-icon>
+      <span>Log out</span>
+    </el-menu-item>
+  </el-menu>
+</template>
+
+<style scoped>
+.avatar {
+  padding: 10px 10px 25px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid black;
+}
+.el-menu {
+  border-right: none;
+}
+</style>
