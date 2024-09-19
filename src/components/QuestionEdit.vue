@@ -43,9 +43,7 @@ const rules = {
       trigger: 'blur'
     }
   ],
-  cate_id: [
-    { required: true, message: 'Please select a category', trigger: 'blur' }
-  ]
+  cate_id: [{ required: true, message: 'Please select a category' }]
 }
 
 const router = useRouter()

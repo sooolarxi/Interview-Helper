@@ -4,13 +4,15 @@ import type {
   userInfo,
   userLoginRegForm,
   userLoginRegRes,
-  userResData
+  userResData,
+  userUpdatePwdForm
 } from './type'
 
 enum API {
   LOGIN_URL = '/api/login',
   REGISTER_URL = '/api/reg',
-  USERINFO_URL = '/my/userinfo'
+  USERINFO_URL = '/my/userinfo',
+  UPDATEPWD_URL = '/my/updatepwd'
 }
 
 export const userLoginService = (data: userLoginRegForm) =>
@@ -24,3 +26,6 @@ export const userGetInfoService = () =>
 
 export const userUpdateInfoService = (data: userInfo) =>
   request.put<void, userResData>(API.USERINFO_URL, data)
+
+export const userUpdatePwdService = (data: userUpdatePwdForm) =>
+  request.patch<void, userResData>(API.UPDATEPWD_URL, data)

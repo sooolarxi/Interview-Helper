@@ -24,3 +24,9 @@ export interface userInfo {
 export interface userGetInfoRes extends userResData {
   data?: userInfo
 }
+
+export interface userUpdatePwdForm {
+  old_pwd: string
+  new_pwd: string
+  re_pwd: string
+}

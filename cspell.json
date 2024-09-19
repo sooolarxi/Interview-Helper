@@ -33,6 +33,7 @@
         "QLIST",
         "QINFO",
         "ADDQ",
-        "vueup"
+        "vueup",
+        "updatepwd"
     ]
 }

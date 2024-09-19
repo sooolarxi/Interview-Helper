@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { userUpdateInfoService } from '@/api/user'
 import type { userInfo } from '@/api/user/type'
-import { useUserStore } from '@/stores'
+import { useDeviceStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
+const { isMobile } = storeToRefs(useDeviceStore())
 
 const formRef = ref()
 const formModel = ref<userInfo>({
@@ -51,10 +52,11 @@ const handleSubmit = async () => {
     :model="formModel"
     :rules="rules"
     label-width="80px"
+    :label-position="isMobile ? 'top' : ''"
     size="large"
     hide-required-asterisk
   >
-    <el-form-item label="Username">
+    <el-form-item label="Username" v-if="user">
       <el-input v-model="user.username" disabled />
     </el-form-item>
     <el-form-item label="Nickname" prop="nickname">
