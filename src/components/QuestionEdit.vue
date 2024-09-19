@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import CategorySelect from './CategorySelect.vue'
 import type { qInfo } from '@/api/questions/type'
 import {
@@ -15,6 +15,12 @@ import { useRouter } from 'vue-router'
 
 const { isMobile } = storeToRefs(useDeviceStore())
 const { totalCat, totalQ, totalRQ, totalUQ } = storeToRefs(useUserStore())
+
+const reload = ref(true)
+watch(isMobile, () => {
+  reload.value = false
+  nextTick(() => (reload.value = true))
+})
 
 const drawer = ref(false)
 const drawerTitle = ref('')
@@ -107,6 +113,7 @@ defineExpose({ openDrawer })
 
 <template>
   <el-drawer
+    v-if="reload"
     v-model="drawer"
     :size="isMobile ? '90%' : '50%'"
     :title="drawerTitle"

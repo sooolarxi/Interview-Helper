@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { qDelInfoService, qGetListService } from '@/api/questions'
 import type { qGetListForm, qInfo } from '@/api/questions/type'
-import { ref, watch, watchEffect } from 'vue'
+import { computed, nextTick, ref, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useDeviceStore, useUserStore } from '@/stores'
@@ -9,9 +9,15 @@ import { useDeviceStore, useUserStore } from '@/stores'
 const { isMobile } = storeToRefs(useDeviceStore())
 const { totalQ, totalRQ, totalUQ } = storeToRefs(useUserStore())
 
+const reload = ref(true)
+watch(isMobile, () => {
+  reload.value = false
+  nextTick(() => (reload.value = true))
+})
+
 const formModel = ref<qGetListForm>({
   pagenum: 1,
-  pagesize: isMobile ? 10 : 4,
+  pagesize: computed(() => (isMobile.value ? 10 : 4)) as unknown as number,
   cate_id: '',
   state: ''
 })
@@ -126,6 +132,7 @@ const print = (row?: qInfo) => {
 
   <el-table
     ref="tableRef"
+    v-if="reload"
     :data="tableData"
     v-loading="tableLoading"
     style="width: 100%; margin: 10px 0"

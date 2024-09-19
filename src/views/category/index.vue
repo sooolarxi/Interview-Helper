@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import type { catInfo } from '@/api/category/type'
 import {
   catAddService,
@@ -7,10 +7,17 @@ import {
   catGetListService,
   catUpdateService
 } from '@/api/category'
-import { useUserStore } from '@/stores'
+import { useDeviceStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
+const { isMobile } = storeToRefs(useDeviceStore())
 const { totalCat } = storeToRefs(useUserStore())
+
+const reload = ref(true)
+watch(isMobile, () => {
+  reload.value = false
+  nextTick(() => (reload.value = true))
+})
 
 const tableRef = ref()
 const tableData = ref<catInfo[]>([])
@@ -152,10 +159,11 @@ const handleDeleteAll = async () => {
 
   <el-table
     ref="tableRef"
+    v-if="reload"
     :data="tableData"
     v-loading="tableLoading"
     style="width: 100%; margin: 10px 0"
-    max-height="350"
+    :max-height="isMobile ? 'none' : 350"
     size="large"
     header-cell-class-name="custom-header-class"
     cell-class-name="custom-cell-class"
