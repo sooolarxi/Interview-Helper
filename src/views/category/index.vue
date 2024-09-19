@@ -188,7 +188,7 @@ const handleDeleteAll = async () => {
     <el-table-column align="right" width="90">
       <template #header>
         <el-popconfirm
-          title="Are you sure to delete this category?"
+          title="Are you sure to delete these categories?"
           @confirm="handleDeleteAll"
         >
           <template #reference>

@@ -217,7 +217,7 @@ const print = (row?: qInfo) => {
         ></el-button>
 
         <el-popconfirm
-          title="Are you sure to delete this question?"
+          title="Are you sure to delete these questions?"
           @confirm="handleDeleteAll"
         >
           <template #reference>

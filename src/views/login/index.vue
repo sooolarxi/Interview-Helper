@@ -16,7 +16,7 @@ const rules = {
     { required: true, message: 'Please enter a username', trigger: 'blur' },
     {
       pattern: /^\S{5,10}$/,
-      message: 'Username must be 5-10 non-empty characters',
+      message: 'Username must be 5-10 non-space characters',
       trigger: 'blur'
     }
   ],
@@ -24,7 +24,7 @@ const rules = {
     { required: true, message: 'Please enter a password', trigger: 'blur' },
     {
       pattern: /^\S{6,15}$/,
-      message: 'Password must be 6-15 non-empty characters',
+      message: 'Password must be 6-15 non-space characters',
       trigger: 'blur'
     }
   ],
@@ -74,7 +74,7 @@ const register = async () => {
     ElMessage.success('Registration successful')
     isLogin.value = true
   } else {
-    ElMessage.error('Username already taken. Please choose another username')
+    ElMessage.error('Username already taken. Please choose another username!')
   }
 }
 watch(isLogin, () => {

@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 import type {
   userGetInfoRes,
+  userInfo,
   userLoginRegForm,
   userLoginRegRes,
   userResData
@@ -20,3 +21,6 @@ export const userRegService = (data: userLoginRegForm) =>
 
 export const userGetInfoService = () =>
   request.get<void, userGetInfoRes>(API.USERINFO_URL)
+
+export const userUpdateInfoService = (data: userInfo) =>
+  request.put<void, userResData>(API.USERINFO_URL, data)

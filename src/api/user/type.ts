@@ -15,10 +15,10 @@ export interface userLoginRegRes extends userResData {
 
 export interface userInfo {
   id: number
-  username: string
+  username?: string
   nickname: string
   email: string
-  user_pic: string | null
+  user_pic?: string | null
 }
 
 export interface userGetInfoRes extends userResData {
