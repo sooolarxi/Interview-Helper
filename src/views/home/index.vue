@@ -81,11 +81,11 @@ watch(isMobile, () => {
 </script>
 
 <template>
-  <div class="avatar">
+  <el-card class="avatar">
     <h3 style="margin-left: 10px">
-      Hello, {{ user?.nickname || user?.username }}
+      Hello🖐️ {{ user?.nickname || user?.username }}
     </h3>
-  </div>
+  </el-card>
   <div class="statistic">
     <HomeStats v-if="!refresh" class="hidden-sm-and-up"></HomeStats>
     <el-card class="chartCard">
@@ -98,9 +98,6 @@ watch(isMobile, () => {
 <style scoped lang="scss">
 .avatar {
   margin-bottom: 10px;
-  padding: 20px;
-  background-color: white;
-  border-bottom: 1px solid #909399;
   h3 {
     font-size: 36px;
   }

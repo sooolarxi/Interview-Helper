@@ -87,6 +87,17 @@ export const constantRoute = [
           icon: 'EditPen',
           group: 'user'
         }
+      },
+      {
+        path: '/:pathMatch(.*)*',
+        component: () => import('@/views/404/index.vue'),
+        name: '404',
+        meta: {
+          title: 'Not Found',
+          device: ['PC', 'mobile'],
+          icon: '',
+          group: ''
+        }
       }
     ]
   }

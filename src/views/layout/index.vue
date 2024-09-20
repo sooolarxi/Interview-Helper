@@ -7,6 +7,7 @@ import { useRoute, useRouter } from 'vue-router'
 import LayoutDropdown from './components/LayoutDropdown.vue'
 import { storeToRefs } from 'pinia'
 import LayoutMain from './components/LayoutMain.vue'
+import Logo from '@/assets/logo_title.png'
 
 const { isMobile } = storeToRefs(useDeviceStore())
 
@@ -39,7 +40,9 @@ const handleSuccess = () => {
 <template>
   <el-container class="layout-container">
     <el-aside class="hidden-xs-only">
-      <div class="logo">logo</div>
+      <div class="logo">
+        <img :src="Logo" alt="" />
+      </div>
       <LayoutMenu :menu-list="PCMenu" :is-mobile="isMobile"></LayoutMenu>
     </el-aside>
 
@@ -87,14 +90,20 @@ const handleSuccess = () => {
 <style scoped lang="scss">
 .layout-container {
   height: 100vh;
-  background-color: #eff0f5;
+  background: url(../../assets/PC_bg.png) bottom right / cover;
+  @media (max-width: 768px) {
+    background: url(../../assets/mobile_bg.png) bottom right / cover;
+  }
   .el-aside {
     width: 200px;
     height: 100vh;
     background-color: #fff;
+    box-shadow: 0 0 5px;
     .logo {
       height: 100px;
-      background-color: steelblue;
+      img {
+        height: 100px;
+      }
     }
   }
   .el-container {
@@ -129,6 +138,7 @@ const handleSuccess = () => {
         right: 30px;
         bottom: 70px;
         z-index: 100;
+        box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.5);
       }
     }
   }

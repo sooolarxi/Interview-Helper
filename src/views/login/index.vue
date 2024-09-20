@@ -3,6 +3,7 @@ import { userRegService } from '@/api/user'
 import { useUserStore } from '@/stores'
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import Logo from '@/assets/logo_remove_bg.png'
 
 const isLogin = ref(true)
 const formRef = ref()
@@ -92,6 +93,7 @@ watch(isLogin, () => {
       <el-col :xs="22" :sm="7">
         <div class="form" v-if="isLogin">
           <div class="title">
+            <img :src="Logo" alt="" />
             <h1>Login to Interview Helper</h1>
           </div>
           <el-form
@@ -130,7 +132,7 @@ watch(isLogin, () => {
         </div>
 
         <div class="form" v-else>
-          <div class="title">
+          <div class="title" style="margin-top: 20px">
             <h1>Create an account</h1>
           </div>
           <el-form
@@ -185,34 +187,42 @@ watch(isLogin, () => {
 .login-container {
   width: 100%;
   height: 100vh;
-
-  .form {
-    position: relative;
-    top: 20vh;
-    padding: 1rem;
-    border: 1px solid #dce2e8;
-    background-color: #f6f8fa;
-    border-radius: 10px;
-
-    .title {
-      width: 100%;
-      font-size: 24px;
-      text-align: center;
-    }
-
-    .el-form {
+  background: url(../../assets/PC_bg.png) bottom right / cover;
+  @media (max-width: 768px) {
+    background: url(../../assets/mobile_bg.png) bottom right / cover;
+  }
+  .el-row {
+    height: 100vh;
+    align-items: center;
+    .form {
       padding: 1rem;
-      margin-top: 20px;
+      border: 1px solid #dce2e8;
+      background-color: #f6f8fa;
+      border-radius: 10px;
 
-      .el-button {
+      .title {
         width: 100%;
+        font-size: 24px;
+        text-align: center;
+        img {
+          height: 100px;
+        }
       }
-    }
 
-    .bottom {
-      display: flex;
-      justify-content: center;
-      font-size: 14px;
+      .el-form {
+        padding: 1rem;
+        margin-top: 20px;
+
+        .el-button {
+          width: 100%;
+        }
+      }
+
+      .bottom {
+        display: flex;
+        justify-content: center;
+        font-size: 14px;
+      }
     }
   }
 }
