@@ -57,11 +57,15 @@ const metaInfo = {
 
 export const constantRoute = [
   {
+    path: '/',
+    redirect: '/login'
+  },
+  {
     path: '/login',
     component: () => import('@/views/login/index.vue')
   },
   {
-    path: '/',
+    path: '/layout',
     component: () => import('@/views/layout/index.vue'),
     redirect: '/home',
     children: [

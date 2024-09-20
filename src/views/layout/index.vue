@@ -18,7 +18,7 @@ onMounted(() => {
 })
 
 const menuList = computed(
-  () => constantRoute.find((item) => item.path === '/')?.children || []
+  () => constantRoute.find((item) => item.path === '/layout')?.children || []
 )
 const filterMenu = (device: string) =>
   menuList.value.filter(

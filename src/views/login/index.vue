@@ -56,7 +56,7 @@ const login = async () => {
     loading.value = true
     await userStore.userLogin(formModel.value)
     ElMessage.success('Login successful')
-    router.push('/')
+    router.push('/home')
     loading.value = false
   } catch (error) {
     ElMessage.error('Login failed')

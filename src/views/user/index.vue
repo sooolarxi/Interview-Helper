@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router'
 const userMenuList = computed(
   () =>
     constantRoute
-      .find((item) => item.path === '/')
+      .find((item) => item.path === '/layout')
       ?.children?.filter((item) => item.meta.group === 'user') || []
 )
 const { token, user } = storeToRefs(useUserStore())
