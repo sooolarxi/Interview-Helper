@@ -85,7 +85,7 @@ const reset = () => formRef.value.resetFields()
     :model="formModel"
     :rules="rules"
     label-width="160px"
-    :label-position="isMobile ? 'top' : ''"
+    :label-position="isMobile ? 'top' : 'left'"
     size="large"
     hide-required-asterisk
   >

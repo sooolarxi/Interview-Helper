@@ -1,5 +1,6 @@
 import { useUserStore } from '@/stores/modules/user'
 import axios from 'axios'
+import router from '@/router'
 
 const baseURL = import.meta.env.VITE_APP_BASE_API
 const request = axios.create({
@@ -20,6 +21,12 @@ request.interceptors.response.use(
     return response.data
   },
   (error) => {
+    const userStore = useUserStore()
+
+    if (error.response?.status === 401 && userStore.user) {
+      ElMessage.error('Login expired, please log in again!')
+      router.push('/login')
+    }
     return Promise.reject(error)
   }
 )

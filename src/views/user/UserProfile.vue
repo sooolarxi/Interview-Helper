@@ -52,7 +52,7 @@ const handleSubmit = async () => {
     :model="formModel"
     :rules="rules"
     label-width="80px"
-    :label-position="isMobile ? 'top' : ''"
+    :label-position="isMobile ? 'top' : 'left'"
     size="large"
     hide-required-asterisk
   >

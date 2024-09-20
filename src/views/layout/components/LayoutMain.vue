@@ -9,16 +9,26 @@ const refreshQ = () => {
     childComponentRef.value.getQList()
   }
 }
+const isLoading = ref(false)
+const onBeforeEnter = () => (isLoading.value = true)
+const onAfterEnter = () => (isLoading.value = false)
 defineExpose({ refreshQ })
 </script>
 
 <template>
   <router-view v-slot="{ Component }">
-    <transition name="fade">
-      <div v-if="$route.path === '/home' || $route.path === '/user'">
+    <transition
+      name="fade"
+      @before-enter="onBeforeEnter"
+      @after-enter="onAfterEnter"
+    >
+      <div
+        v-if="$route.path === '/home' || $route.path === '/user'"
+        v-loading="isLoading"
+      >
         <component :is="Component"></component>
       </div>
-      <el-card v-else style="width: 100%">
+      <el-card v-else style="width: 100%" v-loading="isLoading">
         <component ref="childComponentRef" :is="Component"></component>
       </el-card>
     </transition>

@@ -47,7 +47,7 @@ const handleSuccess = () => {
       <el-header>
         <div class="title">
           <el-icon
-            v-if="$route.meta.group === 'user'"
+            v-if="isMobile && $route.meta.group === 'user'"
             style="margin-right: 5px"
             @click="$router.back()"
           >
