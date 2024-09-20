@@ -1,11 +1,19 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+
 defineProps(['menuList', 'isMobile'])
+const route = useRoute()
+const getActiveMenu = computed(() => {
+  if (route.path.startsWith('/user')) return '/user'
+  else return route.path
+})
 </script>
 
 <template>
   <el-menu
     router
-    :default-active="$route.path"
+    :default-active="getActiveMenu"
     :mode="isMobile ? 'horizontal' : 'vertical'"
   >
     <el-menu-item v-for="item in menuList" :key="item.path" :index="item.path">

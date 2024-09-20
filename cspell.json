@@ -24,7 +24,8 @@
         "axios",
         "pinia",
         "nprogress",
-        "vite"
+        "vite",
+        "echarts"
     ],
     "ignoreWords": [
         "unplugin",

@@ -6,6 +6,7 @@ import LayoutMenu from './components/LayoutMenu.vue'
 import { useRoute, useRouter } from 'vue-router'
 import LayoutDropdown from './components/LayoutDropdown.vue'
 import { storeToRefs } from 'pinia'
+import LayoutMain from './components/LayoutMain.vue'
 
 const { isMobile } = storeToRefs(useDeviceStore())
 
@@ -25,13 +26,13 @@ const route = useRoute()
 const title = ref(route.meta.title)
 watch(route, () => (title.value = route.meta.title))
 
-const childComponentRef = ref()
+const LayoutMainRef = ref()
 const drawerRef = ref()
 const router = useRouter()
 const addQuestion = () => drawerRef.value.openDrawer('Add')
 const handleSuccess = () => {
   if (route.path !== '/questions') router.push(`/questions`)
-  else childComponentRef.value.getQList()
+  else LayoutMainRef.value.refreshQ()
 }
 </script>
 
@@ -44,7 +45,16 @@ const handleSuccess = () => {
 
     <el-container>
       <el-header>
-        <div class="title">{{ title }}</div>
+        <div class="title">
+          <el-icon
+            v-if="$route.meta.group === 'user'"
+            style="margin-right: 5px"
+            @click="$router.back()"
+          >
+            <arrow-left />
+          </el-icon>
+          {{ title }}
+        </div>
         <LayoutDropdown
           class="hidden-xs-only"
           :dorpdownList="dorpdownList"
@@ -53,11 +63,7 @@ const handleSuccess = () => {
       </el-header>
 
       <el-main>
-        <el-card style="width: 100%">
-          <router-view v-slot="{ Component }">
-            <component ref="childComponentRef" :is="Component"></component>
-          </router-view>
-        </el-card>
+        <LayoutMain ref="LayoutMainRef"></LayoutMain>
       </el-main>
 
       <el-footer class="hidden-sm-and-up">
@@ -81,10 +87,11 @@ const handleSuccess = () => {
 <style scoped lang="scss">
 .layout-container {
   height: 100vh;
+  background-color: #eff0f5;
   .el-aside {
     width: 200px;
     height: 100vh;
-    background-color: black;
+    background-color: #fff;
     .logo {
       height: 100px;
       background-color: steelblue;
@@ -100,16 +107,22 @@ const handleSuccess = () => {
         font-size: 30px;
       }
     }
-    .el-card {
-      height: 100%;
-    }
+
     @media (max-width: 768px) {
       padding: 0px;
-      .el-card {
-        height: auto;
+      .el-header {
+        margin-top: 10px;
+        .title {
+          display: flex;
+          align-items: center;
+          .el-icon {
+            font-size: 20px;
+          }
+        }
       }
       .el-footer {
         height: 50px;
+        background-color: #fff;
       }
       .affix {
         position: fixed;

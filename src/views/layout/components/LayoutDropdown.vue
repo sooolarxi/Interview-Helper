@@ -57,4 +57,9 @@ const handleCommand = async (command: string) => {
   </el-dropdown>
 </template>
 
-<style scoped></style>
+<style scoped>
+.el-dropdown-link {
+  display: flex;
+  align-items: center;
+}
+</style>

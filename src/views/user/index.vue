@@ -61,10 +61,12 @@ const handleSelect = async (MenuSelectEvent: string) => {
 
 <style scoped>
 .avatar {
-  padding: 10px 10px 25px;
+  margin-bottom: 10px;
+  padding: 20px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid black;
+  background-color: white;
+  border-bottom: 1px solid #909399;
 }
 .el-menu {
   border-right: none;
