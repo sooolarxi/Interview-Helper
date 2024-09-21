@@ -39,6 +39,12 @@ watch(
 
 <template>
   <el-scrollbar :height="isMobile ? '800px' : '400px'">
+    <h3
+      v-if="isMobile"
+      style="margin-bottom: 10px; color: red; font-size: 20px; line-height: 1.5"
+    >
+      Currently, the print feature is only supported on PC.
+    </h3>
     <div class="container">
       <el-form
         :model="formModel"
@@ -65,9 +71,11 @@ watch(
           </el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" v-print="'#questions'">print</el-button>
+          <el-button :disabled="isMobile" type="primary" v-print="'#questions'">
+            print
+          </el-button>
         </el-form-item>
-        <p style="color: #909399; font-size: 12px">
+        <p style="color: #909399; font-size: 12px; line-height: 1.5">
           Tips: Set the margins to "None" in the print settings for optimal
           results!
         </p>

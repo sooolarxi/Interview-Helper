@@ -270,7 +270,7 @@ const print = (row?: qInfo) => {
     :size="isMobile ? 'small' : 'default'"
     v-model:current-page="formModel.pagenum"
     v-model:page-size="formModel.pagesize"
-    :page-sizes="[4, 8, 10]"
+    :page-sizes="[4, 8, 50, 100]"
     background
     :layout="
       isMobile ? 'sizes, prev, slot, next' : 'total, sizes, prev, pager, next'
