@@ -55,6 +55,7 @@ const login = async () => {
     await formRef.value.validate()
     loading.value = true
     await userStore.userLogin(formModel.value)
+    await userStore.getStatistic()
     ElMessage.success('Login successful')
     router.push('/home')
     loading.value = false

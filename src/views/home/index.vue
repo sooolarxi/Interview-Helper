@@ -63,6 +63,7 @@ const renderChart = (resize?: boolean) => {
       ;(myChart as unknown as echarts.ECharts).resize()
       return
     }
+    if (myChart != null && myChart != undefined) myChart.dispose()
     myChart = echarts.init(chartRef.value)
     myChart.setOption(initChartOptions)
   }

@@ -12,10 +12,7 @@ import Logo from '@/assets/logo_title.png'
 const { isMobile } = storeToRefs(useDeviceStore())
 
 const userStore = useUserStore()
-onMounted(() => {
-  userStore.userGetInfo()
-  userStore.getStatistic()
-})
+onMounted(() => userStore.userGetInfo())
 
 const menuList = computed(
   () => constantRoute.find((item) => item.path === '/layout')?.children || []
