@@ -49,6 +49,7 @@ const rules = {
 const router = useRouter()
 const editorRef = ref()
 const openDrawer = async (opr: string, id?: string) => {
+  formModel.value = { ...defaultForm }
   formRef.value?.resetFields()
   drawerTitle.value = opr + ` Question`
   if (opr === 'Edit') {
@@ -67,7 +68,6 @@ const openDrawer = async (opr: string, id?: string) => {
       return
     }
     editorRef.value?.setHTML('')
-    formModel.value = { ...defaultForm }
     drawer.value = true
   }
 }
@@ -90,8 +90,9 @@ const handleSubmit = async (state: string) => {
   if (!formModel.value.content) formModel.value.content = 'No Data'
 
   const fd = new FormData()
-  for (let key in formModel.value) {
-    fd.append(key, formModel.value[key])
+  const keys = Object.keys(formModel.value) as Array<keyof qInfo>
+  for (const key of keys) {
+    fd.append(key, formModel.value[key] as string)
   }
 
   if (formModel.value.id) {
