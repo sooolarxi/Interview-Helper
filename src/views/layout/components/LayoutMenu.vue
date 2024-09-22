@@ -6,6 +6,7 @@ defineProps(['menuList', 'isMobile'])
 const route = useRoute()
 const getActiveMenu = computed(() => {
   if (route.path.startsWith('/user')) return '/user'
+  else if (route.path.startsWith('/questions')) return '/questions'
   else return route.path
 })
 </script>

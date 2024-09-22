@@ -1,3 +1,60 @@
+const metaInfo = {
+  home: {
+    title: 'Home',
+    device: ['PC', 'mobile'],
+    icon: 'HomeFilled',
+    group: 'menu'
+  },
+  category: {
+    title: 'Category',
+    device: ['PC', 'mobile'],
+    icon: 'Menu',
+    group: 'menu'
+  },
+  questions: {
+    title: 'Questions',
+    device: ['PC', 'mobile'],
+    icon: 'Management',
+    group: 'menu'
+  },
+  questions_print: {
+    title: 'Print Preview',
+    device: ['PC', 'mobile'],
+    icon: '',
+    group: ''
+  },
+  user: {
+    title: 'User',
+    device: ['mobile'],
+    icon: 'Avatar',
+    group: 'menu'
+  },
+  user_profile: {
+    title: 'User Profile',
+    device: ['PC', 'mobile'],
+    icon: 'User',
+    group: 'user'
+  },
+  user_avatar: {
+    title: 'Change Avatar',
+    device: ['PC', 'mobile'],
+    icon: 'Crop',
+    group: 'user'
+  },
+  user_password: {
+    title: 'Reset Password',
+    device: ['PC', 'mobile'],
+    icon: 'EditPen',
+    group: 'user'
+  },
+  notfound: {
+    title: 'Not Found',
+    device: ['PC', 'mobile'],
+    icon: '',
+    group: ''
+  }
+}
+
 export const constantRoute = [
   {
     path: '/login',
@@ -11,93 +68,48 @@ export const constantRoute = [
       {
         path: '/home',
         component: () => import('@/views/home/index.vue'),
-        meta: {
-          title: 'Home',
-          device: ['PC', 'mobile'],
-          icon: 'HomeFilled',
-          group: 'menu'
-        }
+        meta: metaInfo.home
       },
       {
         path: '/category',
         component: () => import('@/views/category/index.vue'),
-        meta: {
-          title: 'Category',
-          device: ['PC', 'mobile'],
-          icon: 'Menu',
-          group: 'menu'
-        }
+        meta: metaInfo.category
       },
       {
         path: '/questions',
         component: () => import('@/views/questions/index.vue'),
-        meta: {
-          title: 'Questions',
-          device: ['PC', 'mobile'],
-          icon: 'Management',
-          group: 'menu'
-        }
+        meta: metaInfo.questions
       },
       {
         path: '/questions/print',
         component: () => import('@/views/questions/PrintPreview.vue'),
-        meta: {
-          title: 'Print Preview',
-          device: ['PC', 'mobile'],
-          icon: '',
-          group: ''
-        }
+        meta: metaInfo.questions_print
       },
       {
         path: '/user',
         component: () => import('@/views/user/index.vue'),
-        meta: {
-          title: 'User',
-          device: ['mobile'],
-          icon: 'Avatar',
-          group: 'menu'
-        }
+        meta: metaInfo.user
       },
       {
         path: '/user/profile',
         component: () => import('@/views/user/UserProfile.vue'),
-        meta: {
-          title: 'User Profile',
-          device: ['PC', 'mobile'],
-          icon: 'User',
-          group: 'user'
-        }
+        meta: metaInfo.user_profile
       },
       {
         path: '/user/avatar',
         component: () => import('@/views/user/ChangeAvatar.vue'),
-        meta: {
-          title: 'Change Avatar',
-          device: ['PC', 'mobile'],
-          icon: 'Crop',
-          group: 'user'
-        }
+        meta: metaInfo.user_avatar
       },
       {
         path: '/user/password',
         component: () => import('@/views/user/ResetPassword.vue'),
-        meta: {
-          title: 'Reset Password',
-          device: ['PC', 'mobile'],
-          icon: 'EditPen',
-          group: 'user'
-        }
+        meta: metaInfo.user_password
       },
       {
         path: '/:pathMatch(.*)*',
         component: () => import('@/views/404/index.vue'),
         name: '404',
-        meta: {
-          title: 'Not Found',
-          device: ['PC', 'mobile'],
-          icon: '',
-          group: ''
-        }
+        meta: metaInfo.notfound
       }
     ]
   }

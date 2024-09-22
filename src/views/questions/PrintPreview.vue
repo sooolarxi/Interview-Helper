@@ -10,35 +10,24 @@ import { useDeviceStore } from '@/stores'
 const { isMobile } = storeToRefs(useDeviceStore())
 
 const route = useRoute()
-const id = ref(route.query.id)
+const id = route.query.id as string[]
 const qInfoArr = ref<qInfo[]>([])
-const stripHtmlTags = (html: string) => {
-  const div = document.createElement('div')
-  div.innerHTML = html
-  return div.textContent || div.innerText || ''
-}
-onMounted(async () => {
-  if (typeof id.value === 'string') {
-    const res = await qGetInfoService(id.value)
+const stripHtmlTags = (html: string) => html.replace(/<\/?[^>]+(>|$)/g, '')
+const fetchQuestionData = async (id: string[]) => {
+  const promises = id.map(async (item: string) => {
+    const res = await qGetInfoService(item)
     const data = res.data as qInfo
     data.content = stripHtmlTags(data.content as string)
     if (data.content === 'No Data') data.content = ''
-    qInfoArr.value.push(data)
-  } else {
-    const promises = (id.value as string[]).map(async (item: string) => {
-      const res = await qGetInfoService(item)
-      const data = res.data as qInfo
-      data.content = stripHtmlTags(data.content as string)
-      if (data.content === 'No Data') data.content = ''
-      return data
-    })
-    const res = await Promise.all(promises)
-    qInfoArr.value.push(...res)
-  }
-})
+    return data
+  })
+  const res = await Promise.all(promises)
+  qInfoArr.value.push(...res)
+}
+onMounted(() => fetchQuestionData(id))
 
 const formModel = ref({
-  fontSize: '1.25',
+  fontSize: 'Default',
   order: 'Ascending',
   onlyQ: ''
 })
@@ -59,9 +48,9 @@ watch(
       >
         <el-form-item label="Font size">
           <el-radio-group v-model="formModel.fontSize">
-            <el-radio value="1">Small</el-radio>
-            <el-radio value="1.25">default</el-radio>
-            <el-radio value="1.5">Large</el-radio>
+            <el-radio value="Small">Small</el-radio>
+            <el-radio value="Default">Default</el-radio>
+            <el-radio value="Large">Large</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="Order">
@@ -88,9 +77,9 @@ watch(
         <div
           class="question"
           :class="{
-            fz1: formModel.fontSize === '1',
-            fz125: formModel.fontSize === '1.25',
-            fz15: formModel.fontSize === '1.5'
+            fzSmall: formModel.fontSize === 'Small',
+            fzDefault: formModel.fontSize === 'Default',
+            fzLarge: formModel.fontSize === 'Large'
           }"
           v-for="(item, index) in qInfoArr"
           :key="item.id"
@@ -124,14 +113,14 @@ watch(
   }
 }
 
-.fz1 {
-  font-size: 1em;
+.fzSmall {
+  font-size: $question-print-font-small;
 }
-.fz125 {
-  font-size: 1.25em;
+.fzDefault {
+  font-size: $question-print-font-default;
 }
-.fz15 {
-  font-size: 1.5em;
+.fzLarge {
+  font-size: $question-print-font-large;
 }
 
 .container {

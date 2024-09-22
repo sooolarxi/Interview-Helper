@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDeviceStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { onMounted, ref, nextTick, watch } from 'vue'
+import { onMounted, ref, nextTick, watch, watchEffect } from 'vue'
 import * as echarts from 'echarts/core'
 import { TooltipComponent, LegendComponent } from 'echarts/components'
 import type {
@@ -30,6 +30,33 @@ const { isMobile } = storeToRefs(useDeviceStore())
 const { user, totalRQ, totalUQ } = storeToRefs(useUserStore())
 
 let myChart: echarts.ECharts | null = null
+const initChartOptions: EChartsOption = {
+  tooltip: {
+    show: true,
+    formatter: '{b0}'
+  },
+  legend: {
+    top: '5%',
+    left: 'center'
+  },
+  series: [
+    {
+      name: 'Question Status',
+      type: 'pie',
+      radius: ['40%', '70%'],
+      center: ['50%', '70%'],
+      startAngle: 180,
+      endAngle: 360,
+      data: [
+        { value: totalRQ.value, name: `Resolved: ${totalRQ.value}` },
+        { value: totalUQ.value, name: `Unanswered: ${totalUQ.value}` }
+      ],
+      label: {
+        show: false
+      }
+    }
+  ]
+}
 const renderChart = (resize?: boolean) => {
   if (chartRef.value) {
     if (myChart && resize) {
@@ -37,38 +64,11 @@ const renderChart = (resize?: boolean) => {
       return
     }
     myChart = echarts.init(chartRef.value)
-    const option: EChartsOption = {
-      tooltip: {
-        show: true,
-        formatter: '{b0}'
-      },
-      legend: {
-        top: '5%',
-        left: 'center'
-      },
-      series: [
-        {
-          name: 'Question Status',
-          type: 'pie',
-          radius: ['40%', '70%'],
-          center: ['50%', '70%'],
-          startAngle: 180,
-          endAngle: 360,
-          data: [
-            { value: totalRQ.value, name: `Resolved: ${totalRQ.value}` },
-            { value: totalUQ.value, name: `Unanswered: ${totalUQ.value}` }
-          ],
-          label: {
-            show: false
-          }
-        }
-      ]
-    }
-    option && myChart.setOption(option)
+    myChart.setOption(initChartOptions)
   }
 }
 onMounted(() => nextTick(() => renderChart()))
-watch([totalRQ, totalUQ], () => nextTick(() => renderChart()))
+watchEffect(() => nextTick(() => renderChart()))
 
 const refresh = ref(false)
 watch(isMobile, () => {

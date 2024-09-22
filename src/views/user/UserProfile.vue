@@ -34,15 +34,25 @@ const rules = {
   ]
 }
 
+const loading = ref(false)
 const handleSubmit = async () => {
+  const hasChanges =
+    formModel.value.nickname !== user.value?.nickname ||
+    formModel.value.email !== user.value?.email
+  if (!hasChanges) {
+    ElMessage.warning('No changes are made!')
+    return
+  }
   try {
     await formRef.value.validate()
   } catch (error) {
     return
   }
+  loading.value = true
   await userUpdateInfoService(formModel.value)
   ElMessage.success('Update Successful')
   userStore.userGetInfo()
+  loading.value = false
 }
 </script>
 
@@ -73,7 +83,9 @@ const handleSubmit = async () => {
       />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="handleSubmit">Submit</el-button>
+      <el-button type="primary" :loading="loading" @click="handleSubmit">
+        Submit
+      </el-button>
     </el-form-item>
   </el-form>
 </template>

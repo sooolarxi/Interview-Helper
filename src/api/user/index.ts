@@ -31,5 +31,5 @@ export const userUpdateInfoService = (data: userInfo) =>
 export const userUpdatePwdService = (data: userUpdatePwdForm) =>
   request.patch<void, userResData>(API.UPDATEPWD_URL, data)
 
-export const userUpdateAvatarService = (data: string) =>
-  request.patch<void, userResData>(API.UPDATEAVATAR_URL, data)
+export const userUpdateAvatarService = (avatar: string) =>
+  request.patch<void, userResData>(API.UPDATEAVATAR_URL, { avatar })

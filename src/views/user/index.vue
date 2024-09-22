@@ -2,13 +2,15 @@
 import { constantRoute } from '@/router/routes'
 import { useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
-const userMenuList =
-  constantRoute
-    .find((item) => item.path === '/')
-    ?.children?.filter((item) => item.meta.group === 'user') || []
-
+const userMenuList = computed(
+  () =>
+    constantRoute
+      .find((item) => item.path === '/')
+      ?.children?.filter((item) => item.meta.group === 'user') || []
+)
 const { token, user } = storeToRefs(useUserStore())
 const router = useRouter()
 const handleSelect = async (MenuSelectEvent: string) => {

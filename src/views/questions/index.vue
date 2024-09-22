@@ -22,6 +22,10 @@ const formModel = ref<qGetListForm>({
   state: ''
 })
 const total = ref(0)
+const paginationInfo = computed(() => {
+  const totalPages = Math.ceil(total.value / formModel.value.pagesize)
+  return `${formModel.value.pagenum} / ${totalPages}`
+})
 
 const tableRef = ref()
 const tableData = ref<qInfo[]>([])
@@ -60,32 +64,27 @@ const handleRowClick = (row: qInfo) => {
 }
 
 const buttonLoading = ref(false)
-const handleDelete = async (id: string, state: string) => {
+const deleteQuestions = async (row: qInfo[]) => {
   buttonLoading.value = true
-  await qDelInfoService(id)
+  const deletePromises = row.map(async (item: qInfo) => {
+    await qDelInfoService(item.id as string)
+    item.state === 'Resolved' ? totalRQ.value-- : totalUQ.value--
+  })
+  await Promise.all(deletePromises)
+  totalQ.value -= row.length
   ElMessage.success('Question deleted successfully')
-  totalQ.value--
-  state === 'Resolved' ? totalRQ.value-- : totalUQ.value--
   getQList()
   buttonLoading.value = false
 }
+const handleDelete = async (row: qInfo) => deleteQuestions([row])
 const actions = ref(false)
 const handleSelectionChange = (newSelection: any) => {
   if (newSelection.length > 0) actions.value = true
   else actions.value = false
 }
 const handleDeleteAll = async () => {
-  buttonLoading.value = true
   const selectedRow = tableRef.value.getSelectionRows()
-  const deletePromises = selectedRow.map(async (item: qInfo) => {
-    await qDelInfoService(item.id as string)
-    totalQ.value--
-    item.state === 'Resolved' ? totalRQ.value-- : totalUQ.value--
-  })
-  await Promise.all(deletePromises)
-  ElMessage.success('Questions deleted successfully')
-  getQList()
-  buttonLoading.value = false
+  deleteQuestions(selectedRow)
 }
 
 const router = useRouter()
@@ -96,7 +95,7 @@ const print = (row?: qInfo) => {
   router.push({
     path: '/questions/print',
     query: {
-      id: selectedRowID.length ? selectedRowID : row?.id
+      id: selectedRowID.length ? selectedRowID : [row?.id]
     }
   })
 }
@@ -245,7 +244,7 @@ const print = (row?: qInfo) => {
         ></el-button>
         <el-popconfirm
           title="Are you sure to delete this question?"
-          @confirm="handleDelete(row.id, row.state)"
+          @confirm="handleDelete(row)"
         >
           <template #reference>
             <el-button
@@ -261,6 +260,10 @@ const print = (row?: qInfo) => {
         </el-popconfirm>
       </template>
     </el-table-column>
+
+    <template #empty>
+      <el-empty :image-size="100" />
+    </template>
   </el-table>
 
   <el-pagination
@@ -274,7 +277,7 @@ const print = (row?: qInfo) => {
     "
     :total="total"
   >
-    {{ `${formModel.pagenum} / ${Math.ceil(total / formModel.pagesize)}` }}
+    {{ paginationInfo }}
   </el-pagination>
 
   <QuestionEdit ref="drawerRef" @success="getQList"></QuestionEdit>

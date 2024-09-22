@@ -33,31 +33,31 @@ onMounted(() => getCatList())
 const checkCatName = (data: catInfo[], newName: string) => {
   if (!newName) {
     ElMessage.error('Category name cannot be empty!')
-    return Promise.reject()
-  } else if (newName.length > 10) {
-    ElMessage.error('Category name must be 1-10 non-space characters!')
-    return Promise.reject()
-  } else if (data.some((item) => item.cate_name === newName)) {
-    ElMessage.error('Category name cannot be duplicated!')
-    return Promise.reject()
+    return false
   }
+  if (newName.length > 10) {
+    ElMessage.error('Category name must be 1-10 non-space characters!')
+    return false
+  }
+  if (data.some((item) => item.cate_name === newName)) {
+    ElMessage.error('Category name cannot be duplicated!')
+    return false
+  }
+  return true
 }
 
 const addButtonLoading = ref(false)
 const add_cate_name = ref<string>('')
 const handleAdd = async () => {
-  try {
-    await checkCatName(tableData.value, add_cate_name.value)
-  } catch (error) {
-    return
-  }
+  if (!checkCatName(tableData.value, add_cate_name.value)) return
   addButtonLoading.value = true
   const res = await catAddService({
     cate_name: add_cate_name.value,
     cate_alias: 'none'
   })
   if (res.code === 1) {
-    ElMessage.error('Category already exists!')
+    ElMessage.error('Service error, please try again later')
+    addButtonLoading.value = false
     return
   }
   add_cate_name.value = ''
@@ -81,12 +81,7 @@ const toView = async (row: catInfo) => {
   edit_cate_name.value = edit_cate_name.value.trim()
   if (edit_cate_name.value !== row.cate_name) {
     const data = tableData.value.filter((item) => item !== row)
-    try {
-      await checkCatName(data, edit_cate_name.value)
-    } catch (error) {
-      return
-    }
-
+    if (!checkCatName(data, edit_cate_name.value)) return
     try {
       await ElMessageBox.confirm(
         `Are you sure you want to change the category name to ${edit_cate_name.value}?`,
@@ -106,33 +101,27 @@ const toView = async (row: catInfo) => {
   }
 }
 
-const delButtonLoading = ref(false)
-const handleDelete = async (id: number) => {
+const deleteCategories = async (row: catInfo[]) => {
   delButtonLoading.value = true
-  await catDelService(id)
+  const deletePromises = row.map(async (item: catInfo) => {
+    await catDelService(item.id as number)
+  })
+  await Promise.all(deletePromises)
+  totalCat.value -= row.length
   ElMessage.success('Category deleted successfully')
-  totalCat.value--
   getCatList()
   delButtonLoading.value = false
 }
+const delButtonLoading = ref(false)
+const handleDelete = async (row: catInfo) => deleteCategories([row])
 const deleteAll = ref(false)
 const handleSelectionChange = (newSelection: catInfo[]) => {
   if (newSelection.length > 0) deleteAll.value = true
   else deleteAll.value = false
 }
 const handleDeleteAll = async () => {
-  delButtonLoading.value = true
   const selectedRow = tableRef.value.getSelectionRows()
-
-  const deletePromises = selectedRow.map(async (item: catInfo) => {
-    await catDelService(item.id as number)
-    totalCat.value--
-  })
-
-  await Promise.all(deletePromises)
-  ElMessage.success('Categories deleted successfully')
-  getCatList()
-  delButtonLoading.value = false
+  deleteCategories(selectedRow)
 }
 </script>
 
@@ -207,7 +196,7 @@ const handleDeleteAll = async () => {
       <template #default="{ row }">
         <el-popconfirm
           title="Are you sure to delete this category?"
-          @confirm="handleDelete(row.id)"
+          @confirm="handleDelete(row)"
         >
           <template #reference>
             <el-button
@@ -223,6 +212,10 @@ const handleDeleteAll = async () => {
         </el-popconfirm>
       </template>
     </el-table-column>
+
+    <template #empty>
+      <el-empty :image-size="100" />
+    </template>
   </el-table>
 </template>
 

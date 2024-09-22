@@ -38,7 +38,7 @@ const rules = {
     {
       validator: (rule: any, value: any, callback: any) => {
         if (value !== formModel.value.password) {
-          callback(new Error('Passwords do not match！'))
+          callback(new Error('Passwords do not match!'))
         } else {
           callback()
         }
@@ -47,21 +47,20 @@ const rules = {
     }
   ]
 }
-
+const loading = ref(false)
 const router = useRouter()
 const userStore = useUserStore()
 const login = async () => {
   try {
     await formRef.value.validate()
-  } catch (error) {
-    return
-  }
-  try {
+    loading.value = true
     await userStore.userLogin(formModel.value)
     ElMessage.success('Login successful')
     router.push('/')
+    loading.value = false
   } catch (error) {
     ElMessage.error('Login failed')
+    loading.value = false
   }
 }
 const register = async () => {
@@ -70,12 +69,15 @@ const register = async () => {
   } catch (error) {
     return
   }
+  loading.value = true
   const res = await userRegService(formModel.value)
   if (res.code === 0) {
     ElMessage.success('Registration successful')
+    loading.value = false
     isLogin.value = true
   } else {
     ElMessage.error('Username already taken. Please choose another username!')
+    loading.value = false
   }
 }
 watch(isLogin, () => {
@@ -120,7 +122,9 @@ watch(isLogin, () => {
               />
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="login">Login</el-button>
+              <el-button type="primary" :loading="loading" @click="login">
+                Login
+              </el-button>
             </el-form-item>
           </el-form>
           <div class="bottom">
@@ -168,7 +172,9 @@ watch(isLogin, () => {
               />
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="register">Sign up</el-button>
+              <el-button type="primary" :loading="loading" @click="register">
+                Sign up
+              </el-button>
             </el-form-item>
           </el-form>
           <div class="bottom">
@@ -199,7 +205,6 @@ watch(isLogin, () => {
       border: 1px solid #dce2e8;
       background-color: #f6f8fa;
       border-radius: 10px;
-
       .title {
         width: 100%;
         font-size: 24px;
@@ -208,16 +213,13 @@ watch(isLogin, () => {
           height: 100px;
         }
       }
-
       .el-form {
         padding: 1rem;
         margin-top: 20px;
-
         .el-button {
           width: 100%;
         }
       }
-
       .bottom {
         display: flex;
         justify-content: center;

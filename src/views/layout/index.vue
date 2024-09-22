@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { constantRoute } from '@/router/routes'
 import { useDeviceStore, useUserStore } from '@/stores'
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import LayoutMenu from './components/LayoutMenu.vue'
 import { useRoute, useRouter } from 'vue-router'
 import LayoutDropdown from './components/LayoutDropdown.vue'
@@ -12,20 +12,26 @@ import Logo from '@/assets/logo_title.png'
 const { isMobile } = storeToRefs(useDeviceStore())
 
 const userStore = useUserStore()
-onMounted(() => userStore.userGetInfo())
+onMounted(() => {
+  userStore.userGetInfo()
+  userStore.getStatistic()
+})
 
-const menuList = constantRoute.find((item) => item.path === '/')?.children || []
-const PCMenu = menuList.filter(
-  (item) => item.meta.device.includes('PC') && item.meta.group === 'menu'
+const menuList = computed(
+  () => constantRoute.find((item) => item.path === '/')?.children || []
 )
-const mobileMenu = menuList.filter(
-  (item) => item.meta.device.includes('mobile') && item.meta.group === 'menu'
+const filterMenu = (device: string) =>
+  menuList.value.filter(
+    (item) => item.meta.device.includes(device) && item.meta.group === 'menu'
+  )
+const PCMenu = computed(() => filterMenu('PC'))
+const mobileMenu = computed(() => filterMenu('mobile'))
+const dorpdownList = computed(() =>
+  menuList.value.filter((item) => item.meta.group === 'user')
 )
-const dorpdownList = menuList.filter((item) => item.meta.group === 'user')
 
 const route = useRoute()
-const title = ref(route.meta.title)
-watch(route, () => (title.value = route.meta.title))
+const title = computed(() => route.meta.title)
 
 const LayoutMainRef = ref()
 const drawerRef = ref()

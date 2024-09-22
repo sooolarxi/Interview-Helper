@@ -60,12 +60,14 @@ const rules = {
 
 const { token, user } = storeToRefs(useUserStore())
 const router = useRouter()
+const loading = ref(false)
 const handleSubmit = async () => {
   try {
     formRef.value.validate()
   } catch (error) {
     return
   }
+  loading.value = true
   const res = await userUpdatePwdService(formModel.value)
   if (res.code === 1) {
     ElMessage.error('Incorrect old password!')
@@ -75,6 +77,7 @@ const handleSubmit = async () => {
     user.value = undefined
     router.push('/login')
   }
+  loading.value = false
 }
 const reset = () => formRef.value.resetFields()
 </script>
@@ -114,8 +117,10 @@ const reset = () => formRef.value.resetFields()
       />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="handleSubmit">Submit</el-button>
-      <el-button @click="reset">Reset</el-button>
+      <el-button type="primary" :loading="loading" @click="handleSubmit">
+        Submit
+      </el-button>
+      <el-button :loading="loading" @click="reset">Reset</el-button>
     </el-form-item>
   </el-form>
 </template>
