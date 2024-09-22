@@ -59,15 +59,15 @@ View **question statistics** with visual representation through pie charts, dire
 
 ![](/public/screenshots/ih_demo4.gif)
 
-**Customizable printing options**, including font size, order, and the ability to print only question titles without answers.
+**Customizable printing options**, including font size, order, and print question titles without answers.
 
 ![](/public/screenshots/ih_demo5.gif)
 
 ### Other features
 
-- User authentication with secure login and registration to manage personal data.
-- Manage user profiles, with easy updates to personal information, avatars, and passwords.
-- Modern, user-friendly, and fully responsive interface optimized for any device.
+- User authentication with login and registration to manage personal data.
+- Easily manage user profiles, allowing for changes to personal information, avatars, and passwords.
+- Modern, user-friendly, and fully responsive interface designed for all devices.
 
 ## Run locally
 
