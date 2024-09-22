@@ -25,7 +25,8 @@
         "pinia",
         "nprogress",
         "vite",
-        "echarts"
+        "echarts",
+        "Freepik"
     ],
     "ignoreWords": [
         "unplugin",
