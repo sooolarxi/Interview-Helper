@@ -307,6 +307,7 @@ const print = (row?: qInfo) => {
 ::v-deep .custom-cell-class {
   height: 60px;
   padding: 16px;
+  cursor: pointer;
   @media (max-width: 768px) {
     height: 80px;
     padding: 0px;

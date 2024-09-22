@@ -69,13 +69,14 @@ const handleAdd = async () => {
 
 const inputRef = ref()
 const edit_cate_name = ref<string>('')
-const handleRowClick = (row: catInfo) => {
+const edit = (row: catInfo) => {
   edit_cate_name.value = row.cate_name
   row.isEdit = true
   nextTick(() => {
     inputRef.value.focus()
   })
 }
+const handleRowClick = (row: catInfo) => edit(row)
 const toView = async (row: catInfo) => {
   row.isEdit = false
   edit_cate_name.value = edit_cate_name.value.trim()
@@ -130,6 +131,7 @@ const handleDeleteAll = async () => {
     <el-form-item>
       <el-input
         v-model="add_cate_name"
+        placeholder="Please enter a category name"
         @blur="add_cate_name = $event.target.value.trim()"
       />
     </el-form-item>
@@ -174,7 +176,7 @@ const handleDeleteAll = async () => {
         </el-link>
       </template>
     </el-table-column>
-    <el-table-column align="right" width="90">
+    <el-table-column align="right" width="125">
       <template #header>
         <el-popconfirm
           title="Are you sure to delete these categories?"
@@ -194,6 +196,14 @@ const handleDeleteAll = async () => {
         </el-popconfirm>
       </template>
       <template #default="{ row }">
+        <el-button
+          size="small"
+          type="primary"
+          icon="Edit"
+          circle
+          plain
+          @click="edit(row)"
+        ></el-button>
         <el-popconfirm
           title="Are you sure to delete this category?"
           @confirm="handleDelete(row)"
@@ -228,5 +238,8 @@ const handleDeleteAll = async () => {
     height: 50px;
     padding: 0px;
   }
+}
+::v-deep .custom-cell-class:hover {
+  cursor: pointer;
 }
 </style>
