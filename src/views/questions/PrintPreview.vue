@@ -17,8 +17,8 @@ const fetchQuestionData = async (id: string[]) => {
   const promises = id.map(async (item: string) => {
     const res = await qGetInfoService(item)
     const data = res.data as qInfo
-    data.content = stripHtmlTags(data.content as string)
-    if (data.content === 'No Data') data.content = ''
+    if (stripHtmlTags(res.data?.content as string) === 'No Data')
+      data.content = ''
     return data
   })
   const res = await Promise.all(promises)
@@ -96,7 +96,7 @@ watch(
             <!-- eslint-disable -->
             <span class="order">{{ `Q${index + 1}.` }}</span>{{ item.title }}
           </h3>
-          <p class="content" v-if="!formModel.onlyQ">{{ item.content }}</p>
+          <div class="content" v-if="!formModel.onlyQ" v-html="item.content"></div>
         </div>
       </div>
     </div>
