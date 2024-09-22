@@ -39,11 +39,13 @@ const handleSelect = async (MenuSelectEvent: string) => {
 
 <template>
   <el-card class="avatar">
-    <el-avatar v-if="user?.user_pic" :src="user?.user_pic" />
-    <el-avatar v-else icon="UserFilled" />
-    <span style="margin-left: 10px">
-      {{ user?.nickname || user?.username }}
-    </span>
+    <div>
+      <el-avatar v-if="user?.user_pic" :src="user?.user_pic" />
+      <el-avatar v-else icon="UserFilled" />
+      <span style="margin-left: 10px">
+        {{ user?.nickname || user?.username }}
+      </span>
+    </div>
   </el-card>
   <el-menu @select="handleSelect">
     <el-menu-item
@@ -64,8 +66,10 @@ const handleSelect = async (MenuSelectEvent: string) => {
 <style scoped>
 .avatar {
   margin-bottom: 10px;
-  display: flex;
-  align-items: center;
+  div {
+    display: flex;
+    align-items: center;
+  }
 }
 .el-menu {
   border-right: none;
