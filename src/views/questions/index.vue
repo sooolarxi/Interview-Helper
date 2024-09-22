@@ -11,13 +11,15 @@ const { totalQ, totalRQ, totalUQ } = storeToRefs(useUserStore())
 
 const reload = ref(true)
 watch(isMobile, () => {
+  if (isMobile.value) formModel.value.pagesize = 50
+  else if (!isMobile.value) formModel.value.pagesize = 4
   reload.value = false
   nextTick(() => (reload.value = true))
 })
 
 const formModel = ref<qGetListForm>({
   pagenum: 1,
-  pagesize: computed(() => (isMobile.value ? 10 : 4)) as unknown as number,
+  pagesize: 4,
   cate_id: '',
   state: ''
 })
