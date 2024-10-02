@@ -23,7 +23,7 @@ Interview Helper is a question management tool designed to streamline interview 
 
 ## [Live demo](https://interview-helper-sooolarxi.vercel.app/)
 
-Deployed on [Vercel](https://vercel.com/). See how it works in real-time!
+Deployed on [Vercel](https://vercel.com/). See how it works in real-time: https://interview-helper-sooolarxi.vercel.app/
 
 ![](/public/screenshots/ih_desktop.png)
 
